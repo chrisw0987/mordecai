@@ -1,0 +1,239 @@
+.flow-container {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid rgba(168, 85, 247, 0.3);
+  border-radius: 20px;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.15);
+  max-width: 520px;
+  width: 100%;
+}
+
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 12px;
+  transition: transform 0.3s ease;
+  flex: 1;
+}
+
+.flow-icon {
+  font-size: 40px;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  border: 2px solid rgba(168, 85, 247, 0.2);
+  transition: all 0.3s ease;
+}
+
+.flow-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e5e7eb;
+  text-align: center;
+  transition: color 0.3s ease;
+  line-height: 1.3;
+  max-width: 90px;
+}
+
+.flow-connector {
+  width: 24px;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    rgba(168, 85, 247, 0.6),
+    rgba(168, 85, 247, 0.2)
+  );
+  margin: 0 4px;
+  position: relative;
+  animation: fadeConnector 6s ease-in-out infinite;
+  align-self: center;
+  margin-bottom: 32px;
+}
+
+.flow-connector::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid rgba(168, 85, 247, 0.6);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  animation: fadeArrow 6s ease-in-out infinite;
+}
+
+.flow-highlight .flow-icon {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.6);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+.flow-highlight .flow-label {
+  color: #c084fc;
+  font-weight: 700;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fadeConnector {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeArrow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.flow-step:hover .flow-icon {
+  transform: scale(1.1);
+  border-color: rgba(168, 85, 247, 0.6);
+}
+
+.flow-step:hover .flow-label {
+  color: #c084fc;
+}
+
+@media (max-width: 968px) {
+  .flow-container {
+    padding: 36px 28px;
+  }
+
+  .flow-icon {
+    font-size: 36px;
+    width: 64px;
+    height: 64px;
+  }
+
+  .flow-label {
+    font-size: 12px;
+    max-width: 80px;
+  }
+
+  .flow-connector {
+    width: 20px;
+    margin-bottom: 28px;
+  }
+
+  .flow-connector::after {
+    right: -5px;
+    border-left-width: 7px;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+  }
+
+  .flow-step {
+    padding: 14px 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .flow-container {
+    flex-direction: column;
+    padding: 32px 28px;
+    max-width: 380px;
+  }
+
+  .flow-connector {
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(
+      to bottom,
+      rgba(168, 85, 247, 0.6),
+      rgba(168, 85, 247, 0.2)
+    );
+    margin: 0;
+    margin-bottom: 0;
+  }
+
+  .flow-connector::after {
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: -6px;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 8px solid rgba(168, 85, 247, 0.6);
+    border-bottom: none;
+  }
+
+  .flow-icon {
+    font-size: 36px;
+    width: 62px;
+    height: 62px;
+  }
+
+  .flow-label {
+    font-size: 13px;
+    max-width: none;
+  }
+
+  .flow-step {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .flow-container {
+    padding: 24px 20px;
+    max-width: 100%;
+  }
+
+  .flow-icon {
+    font-size: 32px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .flow-label {
+    font-size: 12px;
+  }
+
+  .flow-connector {
+    height: 16px;
+  }
+
+  .flow-connector::after {
+    bottom: -5px;
+    border-left-width: 4px;
+    border-right-width: 4px;
+    border-top-width: 7px;
+  }
+
+  .flow-step {
+    padding: 8px;
+    gap: 6px;
+  }
+}

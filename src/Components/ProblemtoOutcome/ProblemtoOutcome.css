@@ -1,0 +1,138 @@
+.problem-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 40px;
+}
+
+.ProblemtoOutcome_title {
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 42px;
+    margin-bottom: 50px;
+}
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.card1,
+.card2,
+.card3 {
+    background-color: #1a1a1a;
+    padding: 32px;
+    border-radius: 12px;
+    border-top: 3px solid #7B5FC6;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.card1 h2,
+.card2 h2,
+.card3 h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+}
+
+.card1 p,
+.card2 p,
+.card3 p {
+    font-size: 16px;
+    color: #b0b0b0;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.card1 img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 12px;
+}
+
+.ProblemtoOutcome_hr {
+    background-color: white;
+    height: 3px;
+    width: 70%;
+    margin: 0 auto;
+    border: none;
+}
+
+@media (max-width: 968px) {
+    .problem-container {
+        padding: 40px 30px;
+    }
+
+    .ProblemtoOutcome_title {
+        font-size: 36px;
+        margin-bottom: 40px;
+    }
+
+    .cards-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .ProblemtoOutcome_hr {
+        width: 80%;
+    }
+}
+
+@media (max-width: 768px) {
+    .problem-container {
+        padding: 30px 20px;
+    }
+
+    .ProblemtoOutcome_title {
+        font-size: 32px;
+    }
+
+    .card1,
+    .card2,
+    .card3 {
+        padding: 24px;
+    }
+
+    .card1 h2,
+    .card2 h2,
+    .card3 h2 {
+        font-size: 22px;
+    }
+
+    .card1 p,
+    .card2 p,
+    .card3 p {
+        font-size: 15px;
+    }
+
+    .ProblemtoOutcome_hr {
+        width: 85%;
+    }
+}
+
+@media (max-width: 480px) {
+    .problem-container {
+        padding: 20px 16px;
+    }
+
+    .ProblemtoOutcome_title {
+        font-size: 28px;
+    }
+
+    .card1 h2,
+    .card2 h2,
+    .card3 h2 {
+        font-size: 20px;
+    }
+
+    .ProblemtoOutcome_hr {
+        width: 90%;
+    }
+}

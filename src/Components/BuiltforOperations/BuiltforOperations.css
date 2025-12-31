@@ -1,0 +1,337 @@
+.operations-section {
+  background-color: #000000;
+  color: #ffffff;
+  padding: 5rem 1.5rem;
+}
+
+.operations-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.operations-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.operations-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, #c084fc, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.operations-subtitle {
+  font-size: 1.25rem;
+  color: #d1d5db;
+  max-width: 48rem;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+
+.operations-focus {
+  margin-bottom: 4rem;
+}
+
+.focus-heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #e5e7eb;
+}
+
+.focus-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .focus-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.focus-card {
+  background-color: #111827;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  transition: all 0.3s ease;
+}
+
+.focus-card:hover {
+  border-color: rgba(168, 85, 247, 0.6);
+  transform: translateY(-2px);
+}
+
+.focus-icon {
+  width: 4rem;
+  height: 4rem;
+  background-color: rgba(168, 85, 247, 0.1);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: #c084fc;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #ffffff;
+  line-height: 1.4;
+}
+
+.operations-footer {
+  background: linear-gradient(to right, #111827, #1f2937);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.footer-text {
+  font-size: 1.125rem;
+  color: #d1d5db;
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.footer-text:last-child {
+  margin-bottom: 0;
+}
+
+.highlight {
+  color: #c084fc;
+  font-weight: 600;
+}
+
+.operations-cta {
+  text-align: center;
+  margin-top: 4rem;
+  padding-top: 4rem;
+  border-top: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.cta-heading {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 2rem;
+  line-height: 1.3;
+}
+
+.cta-button {
+  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+  color: #ffffff;
+  font-size: 1.125rem;
+  font-weight: 600;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px 0 rgba(168, 85, 247, 0.4);
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(168, 85, 247, 0.6);
+  background: linear-gradient(135deg, #9333ea 0%, #6b21a8 100%);
+}
+
+.cta-button:active {
+  transform: translateY(0);
+}
+
+.cta-arrow {
+  transition: transform 0.3s ease;
+}
+
+.cta-button:hover .cta-arrow {
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .operations-title {
+    font-size: 2rem;
+  }
+
+  .operations-subtitle {
+    font-size: 1.125rem;
+  }
+
+  .operations-section {
+    padding: 3rem 1rem;
+  }
+
+  .focus-heading {
+    font-size: 1.25rem;
+  }
+
+  .card-title {
+    font-size: 1.125rem;
+  }
+
+  .footer-text {
+    font-size: 1rem;
+  }
+
+  .cta-heading {
+    font-size: 1.5rem;
+  }
+
+  .cta-button {
+    font-size: 1rem;
+    padding: 0.875rem 1.75rem;
+  }
+}
+
+@media (max-width: 1024px) {
+    .operations-container {
+        max-width: 900px;
+    }
+
+    .operations-title {
+        font-size: 2.5rem;
+    }
+
+    .operations-subtitle {
+        font-size: 1.125rem;
+    }
+
+    .focus-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cta-heading {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 968px) {
+    .focus-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .operations-title {
+        font-size: 2rem;
+    }
+
+    .operations-subtitle {
+        font-size: 1.125rem;
+    }
+
+    .operations-section {
+        padding: 3rem 1rem;
+    }
+
+    .focus-heading {
+        font-size: 1.25rem;
+    }
+
+    .card-title {
+        font-size: 1.125rem;
+    }
+
+    .footer-text {
+        font-size: 1rem;
+    }
+
+    .cta-heading {
+        font-size: 1.5rem;
+    }
+
+    .cta-button {
+        font-size: 1rem;
+        padding: 0.875rem 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .operations-section {
+        padding: 2rem 0.75rem;
+    }
+
+    .operations-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .operations-title {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .operations-subtitle {
+        font-size: 1rem;
+    }
+
+    .operations-focus {
+        margin-bottom: 2.5rem;
+    }
+
+    .focus-heading {
+        font-size: 1.125rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .focus-card {
+        padding: 1.5rem;
+    }
+
+    .focus-icon {
+        width: 3rem;
+        height: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .focus-icon svg {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .operations-footer {
+        padding: 1.5rem;
+    }
+
+    .footer-text {
+        font-size: 0.95rem;
+    }
+
+    .operations-cta {
+        margin-top: 2.5rem;
+        padding-top: 2.5rem;
+    }
+
+    .cta-heading {
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-button {
+        font-size: 0.95rem;
+        padding: 0.75rem 1.5rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .cta-arrow {
+        width: 16px;
+        height: 16px;
+    }
+}

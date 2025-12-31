@@ -1,0 +1,32 @@
+hr,
+.hero_hr,
+.ProblemtoOutcome_hr,
+.Whatweautomate_hr,
+.Usecase_hr,
+.howitworks_hr {
+    margin: 0 auto;
+    border: none;
+}
+
+@media (max-width: 768px) {
+    hr,
+    .hero_hr,
+    .ProblemtoOutcome_hr,
+    .Whatweautomate_hr,
+    .Usecase_hr,
+    .howitworks_hr {
+        width: 80% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    hr,
+    .hero_hr,
+    .ProblemtoOutcome_hr,
+    .Whatweautomate_hr,
+    .Usecase_hr,
+    .howitworks_hr {
+        width: 90% !important;
+        height: 2px !important;
+    }
+}

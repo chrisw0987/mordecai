@@ -1,0 +1,383 @@
+.BookDemo-wrapper {
+  background-color: #000000;
+  min-height: 100vh;
+  padding: 60px 20px;
+}
+
+.BookDemo-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.BookDemo-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.BookDemo-title {
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #c084fc, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.BookDemo-subtitle {
+  font-size: 1.125rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.BookDemo-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+@media (min-width: 1024px) {
+  .BookDemo-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+  }
+}
+
+.BookDemo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.info-section {
+  background-color: #111827;
+  border-radius: 12px;
+  padding: 32px;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.info-heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 20px;
+  margin-top: 0;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info-list li {
+  color: #d1d5db;
+  padding-left: 32px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.info-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #a855f7;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.fit-card {
+  border-radius: 12px;
+  padding: 28px;
+  border: 2px solid;
+}
+
+.fit-good {
+  background-color: rgba(16, 185, 129, 0.05);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.fit-not {
+  background-color: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.fit-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.fit-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.fit-icon-good {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.fit-icon-not {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.fit-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.fit-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fit-card ul li {
+  color: #d1d5db;
+  padding-left: 28px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.fit-good ul li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #10b981;
+  font-weight: bold;
+}
+
+.fit-not ul li::before {
+  content: "✕";
+  position: absolute;
+  left: 0;
+  color: #ef4444;
+  font-weight: bold;
+}
+
+.BookDemo-form-container {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border-radius: 12px;
+  padding: 40px;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  box-shadow: 0 20px 60px rgba(168, 85, 247, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.form-heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 0;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.BookDemo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-group input,
+.form-group textarea {
+  background-color: #000000;
+  border: 2px solid rgba(168, 85, 247, 0.2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 1rem;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #6b7280;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.BookDemo-submit {
+  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+  color: #ffffff;
+  font-size: 1.125rem;
+  font-weight: 600;
+  padding: 16px 32px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px 0 rgba(168, 85, 247, 0.4);
+  margin-top: 8px;
+}
+
+.BookDemo-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(168, 85, 247, 0.6);
+  background: linear-gradient(135deg, #9333ea 0%, #6b21a8 100%);
+}
+
+.BookDemo-submit:active {
+  transform: translateY(0);
+}
+
+.BookDemo-submit svg {
+  transition: transform 0.3s ease;
+}
+
+.BookDemo-submit:hover svg {
+  transform: translateX(4px);
+}
+
+.form-footer {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin: 8px 0 0 0;
+}
+.alert {
+  padding: 16px 20px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  animation: slideIn 0.3s ease;
+  line-height: 1.5;
+}
+
+.alert strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 2px solid rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+
+.alert-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 2px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.BookDemo-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.form-group input:disabled,
+.form-group textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1024px) {
+  .BookDemo-form-container {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .BookDemo-title {
+    font-size: 2rem;
+  }
+
+  .BookDemo-subtitle {
+    font-size: 1rem;
+  }
+
+  .BookDemo-wrapper {
+    padding: 40px 16px;
+  }
+
+  .BookDemo-form-container {
+    padding: 28px 20px;
+  }
+
+  .info-section {
+    padding: 24px;
+  }
+
+  .fit-card {
+    padding: 20px;
+  }
+
+  .form-heading {
+    font-size: 1.5rem;
+  }
+}
