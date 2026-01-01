@@ -1,7 +1,27 @@
-import React from 'react'
+import React, { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
 import './HowItWorks.css';
 import {BotMessageSquare,MessageCircleQuestionMark,CalendarCheck,PhoneForwarded,Handshake,Hammer,Dumbbell,MonitorCheck,UtensilsCrossed,Shield,TrendingUp} from 'lucide-react';
-import ScrollStack, { ScrollStackItem } from './ScrollStack';
+
+const AnimatedCard = ({ children, delay = 0 }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { 
+    amount: 0.3,
+    triggerOnce: true,
+    margin: "0px 0px -50px 0px"
+  });
+  
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ scale: 0.95, opacity: 0, y: 20 }}
+      animate={inView ? { scale: 1, opacity: 1, y: 0 } : { scale: 0.95, opacity: 0, y: 20 }}
+      transition={{ duration: 0.4, delay, ease: "easeOut" }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 function HowItWorks() {
   return (
@@ -12,41 +32,39 @@ function HowItWorks() {
         <h2 className='section-subtitle'>What Happens When a Customer Calls:</h2>
     </div>
 
-    <ScrollStack 
-      useWindowScroll={true}
-      itemDistance={80}
-      stackPosition="15%"
-      itemStackDistance={20}
-    >
-      <ScrollStackItem>
+    <div className='call-flow-container'>
+      <AnimatedCard delay={0.1}>
         <div className='step-card'>
           <div className='step-number'>1</div>
           <p>MordecAI answers immediately with a friendly greeting</p>
           <BotMessageSquare/>
         </div>
-      </ScrollStackItem>
-      <ScrollStackItem>
+      </AnimatedCard>
+
+      <AnimatedCard delay={0.2}>
         <div className='step-card'>
           <div className='step-number'>2</div>
           <p>Handles reservations, questions, or pickup orders</p>
           <MessageCircleQuestionMark/>
         </div>
-      </ScrollStackItem>
-      <ScrollStackItem>
+      </AnimatedCard>
+
+      <AnimatedCard delay={0.3}>
         <div className='step-card'>
           <div className='step-number'>3</div>
           <p>Sends confirmations automatically</p>
           <CalendarCheck/>
         </div>
-      </ScrollStackItem>
-      <ScrollStackItem>
+      </AnimatedCard>
+
+      <AnimatedCard delay={0.4}>
         <div className='step-card'>
           <div className='step-number'>4</div>
           <p>Escalates to staff only when needed</p>
           <PhoneForwarded/>
         </div>
-      </ScrollStackItem>
-    </ScrollStack>
+      </AnimatedCard>
+    </div>
 
     <div className='trust-lines-container'>
       <div className='trust-lines-section'>
@@ -103,4 +121,4 @@ function HowItWorks() {
   )
 }
 
-export default HowItWorks 
+export default HowItWorks
