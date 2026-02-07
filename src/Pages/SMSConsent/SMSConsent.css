@@ -1,0 +1,323 @@
+.sms-consent-wrapper {
+  background-color: #000000;
+  min-height: 100vh;
+  padding: 80px 20px 60px;
+}
+
+.sms-consent-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Header Section */
+.sms-consent-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.sms-consent-header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #c084fc, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  line-height: 1.2;
+  padding-bottom: 8px;
+}
+
+.sms-consent-subtitle {
+  font-size: 1.125rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* Main Content Card */
+.sms-consent-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid rgba(168, 85, 247, 0.3);
+  border-radius: 20px;
+  padding: 48px;
+  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.15);
+}
+
+/* Section Styling */
+.sms-section {
+  margin-bottom: 0;
+}
+
+.sms-icon-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.sms-icon {
+  font-size: 36px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(168, 85, 247, 0.1);
+  border-radius: 12px;
+  border: 2px solid rgba(168, 85, 247, 0.3);
+}
+
+.sms-section h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.sms-description {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: #d1d5db;
+  margin-bottom: 16px;
+}
+
+.sms-description:last-child {
+  margin-bottom: 0;
+}
+
+.sms-description strong {
+  color: #c084fc;
+  font-weight: 700;
+}
+
+/* Info Grid */
+.sms-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.sms-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: rgba(168, 85, 247, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.sms-info-item strong {
+  color: #c084fc;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.sms-info-item span {
+  color: #d1d5db;
+  font-size: 1rem;
+}
+
+/* List Styling */
+.sms-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sms-list li {
+  color: #d1d5db;
+  padding-left: 32px;
+  position: relative;
+  line-height: 1.6;
+  font-size: 1.125rem;
+}
+
+.sms-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #c084fc;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Divider */
+.sms-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(168, 85, 247, 0.3),
+    transparent
+  );
+  margin: 40px 0;
+}
+
+/* Legal Section */
+.sms-legal {
+  text-align: center;
+}
+
+.sms-legal-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sms-legal-link {
+  color: #c084fc;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.125rem;
+  transition: color 0.2s ease;
+}
+
+.sms-legal-link:hover {
+  color: #a855f7;
+  text-decoration: underline;
+}
+
+.sms-legal-separator {
+  color: rgba(168, 85, 247, 0.5);
+  font-weight: 300;
+}
+
+/* Footer Note */
+.sms-footer-note {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.sms-footer-note p {
+  color: #9ca3af;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.sms-footer-note a {
+  color: #c084fc;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.sms-footer-note a:hover {
+  color: #a855f7;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .sms-consent-wrapper {
+    padding: 60px 20px 40px;
+  }
+
+  .sms-consent-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .sms-consent-card {
+    padding: 36px;
+  }
+
+  .sms-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .sms-description {
+    font-size: 1rem;
+  }
+
+  .sms-list li {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sms-consent-wrapper {
+    padding: 50px 16px 30px;
+  }
+
+  .sms-consent-header h1 {
+    font-size: 2rem;
+  }
+
+  .sms-consent-subtitle {
+    font-size: 1rem;
+  }
+
+  .sms-consent-card {
+    padding: 28px 24px;
+  }
+
+  .sms-icon-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .sms-icon {
+    font-size: 32px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .sms-section h2 {
+    font-size: 1.375rem;
+  }
+
+  .sms-description {
+    font-size: 1rem;
+  }
+
+  .sms-legal-links {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .sms-legal-separator {
+    display: none;
+  }
+
+  .sms-divider {
+    margin: 32px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .sms-consent-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .sms-consent-card {
+    padding: 24px 20px;
+  }
+
+  .sms-icon {
+    font-size: 28px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .sms-section h2 {
+    font-size: 1.25rem;
+  }
+
+  .sms-description,
+  .sms-list li {
+    font-size: 0.938rem;
+  }
+
+  .sms-legal-link {
+    font-size: 1rem;
+  }
+
+  .sms-footer-note p {
+    font-size: 0.875rem;
+  }
+}

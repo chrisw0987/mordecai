@@ -1,5 +1,6 @@
 import React from 'react';
 import './Footer.css';
+import { Link } from 'react-router-dom';
 import logo from '../../assets/MordecAI-logo.png';
 
 const Footer = () => {
@@ -30,7 +31,7 @@ const Footer = () => {
             <h4 className="footer-heading">Contact</h4>
             <ul className="footer-list">
               <li>
-                <a href="mailto:info@mordecai.com">mordecaiteam@gmail.com</a>
+                <a href="mailto:mordecaiteam@gmail.com">mordecaiteam@gmail.com</a>
               </li>
             </ul>
           </div>
@@ -62,9 +63,11 @@ const Footer = () => {
             © {new Date().getFullYear()} MordecAI. All rights reserved.
           </p>
           <div className="footer-legal">
-            <a href="#privacy">Privacy Policy</a>
+            <Link to="/privacy">Privacy Policy</Link>
             <span className="divider">•</span>
-            <a href="#terms">Terms of Service</a>
+            <Link to="/terms">Terms of Service</Link>
+            <span className="divider">•</span>
+            <Link to="/sms-consent">SMS Consent</Link>
           </div>
         </div>
       </div>

@@ -92,7 +92,7 @@ function PrivacyPolicy() {
               For questions about this Privacy Policy or how we handle your data, please contact us at:
             </p>
             <p className='privacy-contact'>
-              <a href="mailto:support@getmordecai.com">support@getmordecai.com</a>
+              <a href="mailto:support@getmordecai.com">mordecaiteam@gmail.com</a>
             </p>
           </div>
         </div>
