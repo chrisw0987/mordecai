@@ -40,12 +40,16 @@ function Navbar() {
           <img className="logo" src={logo} alt="MordecAI Logo" />
         </Link>
         
+        {/* Desktop navigation */}
         <ul className='navbar_links'>
           <li>
             <a onClick={() => scrollToSection('home')}>Home</a>
           </li>
           <li>
             <a onClick={() => scrollToSection('about')}>About</a>
+          </li>
+          <li>
+            <Link to="/services">Services</Link>
           </li>
           <li>
             <a onClick={() => scrollToSection('learn-more')}>Learn More</a>
@@ -59,6 +63,7 @@ function Navbar() {
           <button className='navbar_button'>Book A Demo</button>
         </Link>
 
+        {/* Mobile menu toggle */}
         <button className='menu_toggle' onClick={toggleMenu} aria-label="Toggle menu">
           <Menu size={24} />
         </button>
@@ -66,11 +71,13 @@ function Navbar() {
 
       <hr />
 
+      {/* Mobile menu overlay */}
       <div 
         className={`mobile_menu_overlay ${isMenuOpen ? 'open' : ''}`}
         onClick={toggleMenu}
       />
 
+      {/* Mobile menu */}
       <div className={`mobile_menu ${isMenuOpen ? 'open' : ''}`}>
         <div className='mobile_menu_header'>
           <img className="logo" src={logo} alt="MordecAI Logo" />
@@ -91,6 +98,9 @@ function Navbar() {
             <a onClick={() => scrollToSection('about')}>About</a>
           </li>
           <li>
+            <Link to="/services" onClick={() => setIsMenuOpen(false)}>Services</Link>
+          </li>
+          <li>
             <a onClick={() => scrollToSection('learn-more')}>Learn More</a>
           </li>
           <li>
@@ -102,7 +112,6 @@ function Navbar() {
           <button className='navbar_button mobile_menu_button'>Book A Demo</button>
         </Link>
       </div>
-      <hr className='navbar-hr'/>
     </>
   )
 }
