@@ -2,11 +2,14 @@
   background-color: #000000;
   min-height: 100vh;
   padding: 80px 20px 80px;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .services-container {
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .services-header {
@@ -28,9 +31,8 @@
 .services-subtitle {
   font-size: 1.25rem;
   color: #9ca3af;
-  margin: 0;
-  max-width: 700px;
   margin: 0 auto;
+  max-width: 700px;
 }
 
 /* Category Sections */
@@ -44,7 +46,6 @@
   color: #ffffff;
   margin-bottom: 60px;
   text-align: center;
-  position: relative;
 }
 
 .coming-soon-badge {
@@ -60,7 +61,7 @@
   vertical-align: middle;
 }
 
-/* Services Grid */
+/* Services Grid Layout */
 .services-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -75,138 +76,6 @@
   grid-template-columns: 1fr;
   max-width: 320px;
   margin: 0 auto;
-}
-
-/* Service Card - INCREASED HEIGHT */
-.service-card {
-  position: relative;
-  width: 100%;
-  max-width: 320px;
-  height: 400px;
-  perspective: 1000px;
-  cursor: pointer;
-}
-
-.service-card-front,
-.service-card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  transition: transform 0.6s;
-  border-radius: 20px;
-  padding: 40px 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.service-card-front {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border: 2px solid rgba(168, 85, 247, 0.3);
-  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.15);
-  transform: rotateY(0deg);
-}
-
-.service-card-back {
-  background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
-  border: 2px solid rgba(168, 85, 247, 0.5);
-  box-shadow: 0 12px 40px rgba(168, 85, 247, 0.25);
-  transform: rotateY(180deg);
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  padding: 30px 26px;
-}
-
-.service-card:hover .service-card-front {
-  transform: rotateY(-180deg);
-}
-
-.service-card:hover .service-card-back {
-  transform: rotateY(0deg);
-}
-
-/* Coming Soon Card Styling */
-.coming-soon-card .service-card-front,
-.coming-soon-card .service-card-back {
-  border-color: rgba(168, 85, 247, 0.4);
-  opacity: 0.9;
-}
-
-/* Front Side */
-.service-emoji {
-  font-size: 3.5rem;
-  margin-bottom: 20px;
-  filter: drop-shadow(0 4px 8px rgba(168, 85, 247, 0.3));
-}
-
-.service-title {
-  font-size: 1.375rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 14px;
-  line-height: 1.3;
-}
-
-.service-tagline {
-  font-size: 1rem;
-  color: #c084fc;
-  font-weight: 500;
-  margin: 0;
-  line-height: 1.4;
-}
-
-/* Back Side */
-.service-emoji-small {
-  font-size: 2.5rem;
-  margin-bottom: 16px;
-  align-self: center;
-}
-
-.service-title-small {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 20px;
-  text-align: center;
-  width: 100%;
-}
-
-.service-description {
-  font-size: 0.95rem;
-  color: #d1d5db;
-  line-height: 1.7;
-  margin-bottom: 24px;
-}
-
-.service-benefits {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-}
-
-.service-benefits li {
-  font-size: 0.9rem;
-  color: #d1d5db;
-  padding-left: 28px;
-  position: relative;
-  line-height: 1.5;
-}
-
-.service-benefits li::before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  color: #c084fc;
-  font-weight: bold;
-  font-size: 1.1rem;
 }
 
 /* CTA Section */
@@ -262,10 +131,9 @@
 
 @media (max-width: 1200px) {
   .services-grid {
-    grid-template-columns: 1fr; /* Changed to single column for tablets */
-    gap: 60px; /* Vertical spacing only */
-    max-width: 500px; /* Centered single column */
-    margin: 0 auto;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px 40px;
+    max-width: 800px;
   }
 
   .category-title {
@@ -280,7 +148,7 @@
 
 @media (max-width: 968px) {
   .services-wrapper {
-    padding: 60px 20px 60px;
+    padding: 60px 20px;
   }
 
   .services-header {
@@ -305,12 +173,7 @@
   }
 
   .services-grid {
-    gap: 55px; /* Single column - vertical spacing only */
-    max-width: 450px;
-  }
-
-  .service-card {
-    height: 400px;
+    gap: 45px 35px;
   }
 
   .services-cta h2 {
@@ -324,7 +187,13 @@
 
 @media (max-width: 768px) {
   .services-wrapper {
-    padding: 50px 16px 50px;
+    padding: 50px 16px;
+    overflow-x: hidden;
+  }
+
+  .services-container {
+    width: 100%;
+    padding: 0;
   }
 
   .services-header {
@@ -340,29 +209,29 @@
   }
 
   .services-category {
-    margin-bottom: 80px; /* Increased from 70px */
+    margin-bottom: 70px;
+    width: 100%;
   }
 
   .category-title {
     font-size: 1.75rem;
-    margin-bottom: 45px; /* Increased from 40px */
+    margin-bottom: 40px;
   }
 
   .coming-soon-badge {
     font-size: 0.875rem;
     padding: 4px 12px;
     margin-left: 8px;
+    display: block;
+    margin-top: 8px;
   }
 
   .services-grid {
-    grid-template-columns: 1fr; /* Single column */
-    gap: 70px; /* Increased from 50px - more vertical space between cards */
-    max-width: 400px;
-  }
-
-  .service-card {
+    grid-template-columns: 1fr;
+    gap: 40px;
     max-width: 100%;
-    height: 400px; /* Maintain taller height */
+    width: 100%;
+    padding: 0;
   }
 
   .services-cta {
@@ -385,7 +254,7 @@
 
 @media (max-width: 480px) {
   .services-wrapper {
-    padding: 40px 16px 40px;
+    padding: 40px 16px;
   }
 
   .services-header h1 {
@@ -393,52 +262,16 @@
   }
 
   .services-category {
-    margin-bottom: 70px; /* Increased from 60px */
+    margin-bottom: 60px;
   }
 
   .category-title {
     font-size: 1.5rem;
-    margin-bottom: 40px; /* Increased from 35px */
+    margin-bottom: 35px;
   }
 
   .services-grid {
-    gap: 60px; /* Increased from 45px - more vertical spacing */
-    max-width: 100%;
-    padding: 0 10px;
-  }
-
-  .service-card {
-    height: 420px; /* Slightly taller for smaller screens */
-  }
-
-  .service-card-front,
-  .service-card-back {
-    padding: 36px 26px; /* Better padding */
-  }
-
-  .service-card-back {
-    padding: 32px 24px;
-  }
-
-  .service-emoji {
-    font-size: 3rem;
-  }
-
-  .service-title {
-    font-size: 1.25rem;
-  }
-
-  .service-description {
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-  }
-
-  .service-benefits {
-    gap: 10px;
-  }
-
-  .service-benefits li {
-    font-size: 0.875rem;
+    gap: 35px;
   }
 
   .services-cta {
@@ -447,27 +280,5 @@
 
   .services-cta h2 {
     font-size: 1.5rem;
-  }
-}
-
-/* Extra small devices */
-@media (max-width: 360px) {
-  .services-grid {
-    gap: 55px; /* Increased from 40px */
-    padding: 0 5px;
-  }
-
-  .service-card {
-    height: 440px; /* Even taller for very small screens */
-  }
-
-  .service-card-front,
-  .service-card-back {
-    padding: 32px 22px;
-  }
-
-  .service-benefits li {
-    font-size: 0.85rem;
-    line-height: 1.4;
   }
 }
