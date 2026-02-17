@@ -11,7 +11,7 @@ function Services() {
         <div className='services-header'>
           <h1>Our Services</h1>
           <p className='services-subtitle'>
-            Comprehensive AI-powered solutions to transform your business operations
+            Automation systems designed to capture more customers and increase revenue
           </p>
         </div>
 
@@ -57,13 +57,13 @@ function Services() {
             
             <ServiceCard
               emoji="💬"
-              title="Customer Communication"
-              tagline="Professional communication, zero manual work"
-              description="Automated appointment confirmations, reminders, service updates, and after-hours responses."
+              title="24/7 Website Live Chat"
+              tagline="Capture leads even after hours"
+              description="AI-powered agent that answers, captures leads, and books appointments automatically — even when you're closed."
               benefits={[
-                'Appointment confirmations and reminders',
-                'Service update notifications',
-                'No manual texting required'
+                'Instant answers to common customer questions',
+                'Capture name, phone, and service interest',
+                'Book appointments or request callbacks automatically'
               ]}
             />
           </div>
@@ -75,7 +75,7 @@ function Services() {
           <div className='services-grid'>
             <ServiceCard
               emoji="🌐"
-              title="SEO Websites"
+              title="Optimized Websites"
               tagline="Get found online, convert more customers"
               description="Fast, mobile-friendly websites designed to rank locally and convert visitors into calls and bookings."
               benefits={[
@@ -87,7 +87,7 @@ function Services() {
             
             <ServiceCard
               emoji="🎯"
-              title="Local SEO Setup"
+              title="Google & Local SEO Setup"
               tagline="Make sure customers can find you everywhere"
               description="Complete setup and optimization of your online presence across all platforms."
               benefits={[
@@ -110,14 +110,14 @@ function Services() {
             />
             
             <ServiceCard
-              emoji="📊"
-              title="Insights & Analytics"
-              tagline="See where your opportunities are"
-              description="See when customers call, what they ask, and where opportunities are being missed."
+              emoji="⭐"
+              title="Review & Reputation Automation"
+              tagline="Turn happy customers into 5-star reviews"
+              description="Automatically request reviews from satisfied customers and strengthen your online reputation without chasing feedback manually."
               benefits={[
-                'Track call volume and patterns',
-                'Identify common customer questions',
-                'Data-driven business decisions'
+                'Automated post-service review requests',
+                'Boost Google and Yelp ratings',
+                'Build trust with future customers'
               ]}
             />
           </div>
@@ -126,7 +126,7 @@ function Services() {
         {/* Coming Soon Section */}
         <div className='services-category coming-soon-section'>
           <h2 className='category-title'>
-            Internal Tools <span className='coming-soon-badge'>Coming Soon</span>
+            Internal Efficiency <span className='coming-soon-badge'>Coming Soon</span>
           </h2>
           <div className='services-grid coming-soon-grid'>
             <ServiceCard
@@ -141,6 +141,20 @@ function Services() {
               ]}
               isComingSoon={true}
             />
+
+            <ServiceCard
+              emoji="📊"
+              title="Call Analytics Dashboard"
+              tagline="See where your opportunities are"
+              description="See when customers call, what they ask, and where opportunities are being missed."
+              benefits={[
+                'Track call volume and patterns',
+                'Identify common customer questions',
+                'Data-driven business decisions'
+              ]}
+              
+            />
+            
           </div>
         </div>
 

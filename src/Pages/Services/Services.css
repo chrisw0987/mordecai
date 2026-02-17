@@ -71,11 +71,9 @@
   margin: 0 auto;
 }
 
-/* Coming Soon Grid - Center single card */
+/* Coming Soon Grid - same layout as other sections */
 .coming-soon-grid {
-  grid-template-columns: 1fr;
-  max-width: 320px;
-  margin: 0 auto;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 /* CTA Section */
