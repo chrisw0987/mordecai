@@ -68,7 +68,7 @@ function getNameSimilarity(
       normalizedQuery
     )
   ) {
-    return 0.96;
+    return 0.97;
   }
 
   if (
@@ -76,7 +76,7 @@ function getNameSimilarity(
       normalizedQuery
     )
   ) {
-    return 0.92;
+    return 0.94;
   }
 
   const queryTokens =
@@ -140,35 +140,104 @@ function getNameSimilarity(
         totalWeight
       : 0;
 
-  const nameCoverage =
-    nameTokens.length > 0
-      ? queryTokens.filter(
-          (token) =>
-            nameTokens.includes(
-              token
-            )
-        ).length /
-        Math.max(
-          nameTokens.length,
-          queryTokens.length
+  const exactTokenCoverage =
+    queryTokens.filter(
+      (token) =>
+        nameTokens.includes(
+          token
         )
-      : 0;
+    ).length /
+    Math.max(
+      queryTokens.length,
+      1
+    );
 
   return Math.min(
     1,
-    coverage * 0.8 +
-      nameCoverage * 0.2
+    coverage * 0.82 +
+      exactTokenCoverage * 0.18
   );
 }
 
-function isLikelyBusiness(place) {
-  const hasBusinessName =
-    Boolean(
-      place.name &&
-      place.name.trim()
-    );
+function getLocationScore(
+  place,
+  city,
+  state
+) {
+  if (
+    !city &&
+    !state
+  ) {
+    return 0;
+  }
 
-  if (!hasBusinessName) {
+  let score = 0;
+  let possible = 0;
+
+  if (city) {
+    possible += 1;
+
+    const placeCity =
+      normalizeText(
+        place.city || ""
+      );
+
+    const requestedCity =
+      normalizeText(city);
+
+    if (
+      placeCity ===
+      requestedCity
+    ) {
+      score += 1;
+    } else if (
+      placeCity.includes(
+        requestedCity
+      ) ||
+      requestedCity.includes(
+        placeCity
+      )
+    ) {
+      score += 0.7;
+    }
+  }
+
+  if (state) {
+    possible += 1;
+
+    const requestedState =
+      normalizeText(state);
+
+    const placeState =
+      normalizeText(
+        place.state || ""
+      );
+
+    const placeStateCode =
+      normalizeText(
+        place.state_code || ""
+      );
+
+    if (
+      placeState ===
+        requestedState ||
+      placeStateCode ===
+        requestedState
+    ) {
+      score += 1;
+    }
+  }
+
+  return possible > 0
+    ? score / possible
+    : 0;
+}
+
+function isLikelyBusiness(place) {
+  const name =
+    place.name?.trim();
+
+  if (!name) {
     return false;
   }
 
@@ -178,32 +247,36 @@ function isLikelyBusiness(place) {
       ""
     ).toLowerCase();
 
-  const categoryText =
+  const categories =
     Array.isArray(
       place.categories
     )
       ? place.categories
-          .join(" ")
-          .toLowerCase()
-      : "";
+      : [];
 
-  const obviouslyGeographic =
-    [
+  const categoryText =
+    categories
+      .join(" ")
+      .toLowerCase();
+
+  const geographicTypes =
+    new Set([
       "city",
       "county",
       "state",
       "country",
       "postcode",
       "street",
-      "building",
       "suburb",
       "district",
       "neighbourhood",
       "neighborhood",
-    ].includes(resultType);
+    ]);
 
   if (
-    obviouslyGeographic &&
+    geographicTypes.has(
+      resultType
+    ) &&
     !categoryText
   ) {
     return false;
@@ -214,7 +287,9 @@ function isLikelyBusiness(place) {
 
 function normalizeSuggestion(
   place,
-  query
+  query,
+  city,
+  state
 ) {
   const name =
     place.name || "";
@@ -225,13 +300,39 @@ function normalizeSuggestion(
       name
     );
 
+  const locationScore =
+    getLocationScore(
+      place,
+      city,
+      state
+    );
+
   const geoConfidence =
     place.rank?.confidence ??
     0;
 
-  const combinedScore =
-    nameSimilarity * 0.82 +
-    geoConfidence * 0.18;
+  let matchScore;
+
+  if (
+    city ||
+    state
+  ) {
+    /*
+     * When the user gives us
+     * a location, use it.
+     *
+     * Business name still matters
+     * most.
+     */
+    matchScore =
+      nameSimilarity * 0.72 +
+      locationScore * 0.2 +
+      geoConfidence * 0.08;
+  } else {
+    matchScore =
+      nameSimilarity * 0.9 +
+      geoConfidence * 0.1;
+  }
 
   return {
     placeId:
@@ -247,6 +348,9 @@ function normalizeSuggestion(
 
     state:
       place.state || "",
+
+    stateCode:
+      place.state_code || "",
 
     postcode:
       place.postcode || "",
@@ -274,9 +378,120 @@ function normalizeSuggestion(
 
     nameSimilarity,
 
-    matchScore:
-      combinedScore,
+    locationScore,
+
+    matchScore,
   };
+}
+
+async function searchGeoapify({
+  searchText,
+  apiKey,
+  type,
+}) {
+  const params =
+    new URLSearchParams({
+      text:
+        searchText,
+
+      format:
+        "json",
+
+      limit:
+        "20",
+
+      lang:
+        "en",
+
+      /*
+       * Keep Mordecai searches
+       * inside the United States.
+       */
+      filter:
+        "countrycode:us",
+
+      apiKey,
+    });
+
+  /*
+   * First pass uses amenity.
+   * Broad fallback omits this.
+   */
+  if (type) {
+    params.set(
+      "type",
+      type
+    );
+  }
+
+  const response =
+    await fetch(
+      `${GEOAPIFY_AUTOCOMPLETE}?${params.toString()}`
+    );
+
+  const rawBody =
+    await response.text();
+
+  if (!response.ok) {
+    console.error(
+      "Geoapify search error:",
+      response.status,
+      rawBody
+    );
+
+    throw new Error(
+      "We couldn't search for that business right now."
+    );
+  }
+
+  try {
+    const data =
+      JSON.parse(rawBody);
+
+    return (
+      data.results || []
+    );
+  } catch {
+    throw new Error(
+      "Business search returned an unexpected response."
+    );
+  }
+}
+
+function dedupePlaces(
+  places
+) {
+  const seen =
+    new Set();
+
+  const unique = [];
+
+  for (
+    const place
+    of places
+  ) {
+    const key =
+      place.place_id ||
+      [
+        place.name,
+        place.formatted,
+      ]
+        .filter(Boolean)
+        .join("|");
+
+    if (
+      !key ||
+      seen.has(key)
+    ) {
+      continue;
+    }
+
+    seen.add(key);
+
+    unique.push(place);
+  }
+
+  return unique;
 }
 
 async function getPlaceDetails(
@@ -285,8 +500,12 @@ async function getPlaceDetails(
 ) {
   const params =
     new URLSearchParams({
-      id: placeId,
-      features: "details",
+      id:
+        placeId,
+
+      features:
+        "details",
+
       apiKey,
     });
 
@@ -343,6 +562,9 @@ async function getPlaceDetails(
     state:
       properties.state || "",
 
+    stateCode:
+      properties.state_code || "",
+
     postcode:
       properties.postcode || "",
 
@@ -398,25 +620,33 @@ function shouldAutoSelect(
   const second =
     suggestions[1];
 
+  /*
+   * Exact / near-exact name,
+   * clearly better than the
+   * next candidate.
+   */
   if (
     first.nameSimilarity >=
-      0.96 &&
+      0.94 &&
     first.matchScore >=
-      0.78 &&
+      0.75 &&
     (
       !second ||
       first.matchScore -
         second.matchScore >=
-        0.16
+        0.12
     )
   ) {
     return true;
   }
 
+  /*
+   * Only one realistic result.
+   */
   if (
     suggestions.length === 1 &&
     first.nameSimilarity >=
-      0.82
+      0.75
   ) {
     return true;
   }
@@ -453,7 +683,8 @@ export async function handler(
     try {
       parsedBody =
         JSON.parse(
-          event.body || "{}"
+          event.body ||
+            "{}"
         );
     } catch {
       return {
@@ -490,7 +721,9 @@ export async function handler(
         ? parsedBody.state.trim()
         : "";
 
-    if (query.length < 2) {
+    if (
+      query.length < 2
+    ) {
       return {
         statusCode: 400,
 
@@ -518,14 +751,11 @@ export async function handler(
     }
 
     /*
-     * Keep the business name separate
-     * for Mordecai's name matching.
-     *
-     * City and state are only used
-     * to narrow Geoapify's search.
-     *
      * Example:
-     * Green Tea, Stony Brook, NY
+     *
+     * Iron Poke,
+     * Stony Brook,
+     * NY
      */
     const searchText =
       [
@@ -536,137 +766,148 @@ export async function handler(
         .filter(Boolean)
         .join(", ");
 
-    const params =
-      new URLSearchParams({
-        text: searchText,
-
-        format:
-          "json",
-
-        limit:
-          "10",
-
-        lang:
-          "en",
-
-        /*
-         * Search for businesses /
-         * amenities rather than
-         * generic locations.
-         */
+    /*
+     * PASS 1
+     *
+     * Try Geoapify's business /
+     * amenity search first.
+     */
+    const amenityResults =
+      await searchGeoapify({
+        searchText,
+        apiKey,
         type:
           "amenity",
-
-        /*
-         * Mordecai currently
-         * supports US businesses
-         * only.
-         */
-        filter:
-          "countrycode:us",
-
-        apiKey,
       });
 
-    const response =
-      await fetch(
-        `${GEOAPIFY_AUTOCOMPLETE}?${params.toString()}`
-      );
+    let allResults =
+      [...amenityResults];
 
-    const rawBody =
-      await response.text();
-
-    if (!response.ok) {
-      console.error(
-        "Geoapify search error:",
-        response.status,
-        rawBody
-      );
-
-      return {
-        statusCode: 502,
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body:
-          JSON.stringify({
-            error:
-              "We couldn't search for that business right now.",
-          }),
-      };
-    }
-
-    let data;
-
-    try {
-      data =
-        JSON.parse(rawBody);
-    } catch {
-      return {
-        statusCode: 502,
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body:
-          JSON.stringify({
-            error:
-              "Business search returned an unexpected response.",
-          }),
-      };
-    }
-
-    const suggestions =
-      (data.results || [])
-
-        /*
-         * Remove cities, streets,
-         * counties, etc.
-         */
+    /*
+     * See whether the amenity
+     * search actually gave us
+     * useful business candidates.
+     */
+    const usefulAmenityResults =
+      amenityResults
         .filter(
           isLikelyBusiness
         )
-
-        /*
-         * Compare results against
-         * the BUSINESS NAME only.
-         *
-         * City/state do not hurt
-         * name similarity.
-         */
         .map(
           (place) =>
             normalizeSuggestion(
               place,
-              query
+              query,
+              city,
+              state
             )
         )
-
-        /*
-         * Keep useful US results
-         * with a reasonable name
-         * match.
-         */
         .filter(
           (place) =>
             place.placeId &&
             place.name &&
             place.countryCode ===
-              "us" &&
-            place.nameSimilarity >=
-              0.35
+              "us"
+        );
+
+    /*
+     * PASS 2
+     *
+     * Geoapify sometimes stores
+     * businesses in ways that don't
+     * surface under type=amenity.
+     *
+     * If pass 1 is weak, run a
+     * broader search and filter it
+     * ourselves.
+     */
+    const strongAmenityResult =
+      usefulAmenityResults.some(
+        (place) =>
+          place.nameSimilarity >=
+            0.75 &&
+          (
+            !city &&
+            !state
+              ? true
+              : place.locationScore >=
+                0.5
+          )
+      );
+
+    if (
+      usefulAmenityResults.length <
+        3 ||
+      !strongAmenityResult
+    ) {
+      const broadResults =
+        await searchGeoapify({
+          searchText,
+          apiKey,
+        });
+
+      allResults = [
+        ...allResults,
+        ...broadResults,
+      ];
+    }
+
+    /*
+     * Merge duplicate places
+     * returned by both searches.
+     */
+    const uniqueResults =
+      dedupePlaces(
+        allResults
+      );
+
+    /*
+     * Now Mordecai performs its
+     * own relevance ranking.
+     *
+     * We no longer hard-block
+     * results just because their
+     * name similarity is under
+     * 0.35.
+     */
+    const suggestions =
+      uniqueResults
+        .filter(
+          isLikelyBusiness
+        )
+
+        .map(
+          (place) =>
+            normalizeSuggestion(
+              place,
+              query,
+              city,
+              state
+            )
+        )
+
+        .filter(
+          (place) =>
+            place.placeId &&
+            place.name &&
+            place.countryCode ===
+              "us"
         )
 
         /*
-         * Prioritize the business
-         * name over generic
-         * geographic confidence.
+         * Completely unrelated
+         * results can still be
+         * discarded, but this is
+         * intentionally loose.
          */
+        .filter(
+          (place) =>
+            place.nameSimilarity >
+              0 ||
+            place.locationScore >=
+              0.75
+        )
+
         .sort(
           (a, b) =>
             b.matchScore -
@@ -675,12 +916,9 @@ export async function handler(
 
         .slice(
           0,
-          5
+          6
         );
 
-    /*
-     * No useful business found.
-     */
     if (
       suggestions.length ===
       0
@@ -702,18 +940,15 @@ export async function handler(
 
             hint:
               city || state
-                ? "We still couldn't find a strong business match. Double-check the business name or try a nearby city."
+                ? "We couldn't find a matching business in that area. Double-check the name or try a nearby city."
                 : "Add the city and state to narrow the search.",
           }),
       };
     }
 
     /*
-     * Several businesses could
-     * reasonably match.
-     *
-     * Let the customer choose
-     * rather than guessing.
+     * Don't guess if several
+     * plausible businesses exist.
      */
     if (
       !shouldAutoSelect(
@@ -736,21 +971,15 @@ export async function handler(
             suggestions:
               suggestions.slice(
                 0,
-                4
+                5
               ),
 
             hint:
-              "Choose the right location from the matches below.",
+              "Choose the right business from the matches below.",
           }),
       };
     }
 
-    /*
-     * Strong business match.
-     * Get the full place details
-     * so we can look for its
-     * website.
-     */
     const business =
       await getPlaceDetails(
         suggestions[0]
@@ -759,12 +988,9 @@ export async function handler(
       );
 
     /*
-     * We found the business,
-     * but Geoapify does not have
+     * Business found, but
+     * Geoapify does not know
      * its website.
-     *
-     * Frontend will ask the user
-     * to enter it manually.
      */
     if (
       !business.website
@@ -788,8 +1014,7 @@ export async function handler(
     }
 
     /*
-     * Best case:
-     * business and website found.
+     * Business + website found.
      */
     return {
       statusCode: 200,
