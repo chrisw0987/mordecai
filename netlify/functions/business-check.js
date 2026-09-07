@@ -8,25 +8,20 @@ function isPrivateIp(ip) {
   if (!ip) return true;
 
   if (net.isIPv4(ip)) {
-    const [a, b] = ip
-      .split(".")
-      .map(Number);
+    const [a, b] = ip.split(".").map(Number);
 
     return (
       a === 10 ||
       a === 127 ||
       a === 0 ||
       (a === 169 && b === 254) ||
-      (a === 172 &&
-        b >= 16 &&
-        b <= 31) ||
+      (a === 172 && b >= 16 && b <= 31) ||
       (a === 192 && b === 168)
     );
   }
 
   if (net.isIPv6(ip)) {
-    const lower =
-      ip.toLowerCase();
+    const lower = ip.toLowerCase();
 
     return (
       lower === "::1" ||
@@ -39,22 +34,17 @@ function isPrivateIp(ip) {
   return true;
 }
 
-async function validatePublicUrl(
-  value
-) {
-  let input =
-    value.trim();
+async function validatePublicUrl(value) {
+  let input = value.trim();
 
   if (
     !input.startsWith("http://") &&
     !input.startsWith("https://")
   ) {
-    input =
-      `https://${input}`;
+    input = `https://${input}`;
   }
 
-  const url =
-    new URL(input);
+  const url = new URL(input);
 
   if (
     url.protocol !== "http:" &&
@@ -65,8 +55,7 @@ async function validatePublicUrl(
     );
   }
 
-  const hostname =
-    url.hostname.toLowerCase();
+  const hostname = url.hostname.toLowerCase();
 
   if (
     hostname === "localhost" ||
@@ -77,19 +66,17 @@ async function validatePublicUrl(
     );
   }
 
-  const addresses =
-    await dns.lookup(
-      hostname,
-      {
-        all: true,
-      }
-    );
+  const addresses = await dns.lookup(
+    hostname,
+    {
+      all: true,
+    }
+  );
 
   if (
     !addresses.length ||
-    addresses.some(
-      ({ address }) =>
-        isPrivateIp(address)
+    addresses.some(({ address }) =>
+      isPrivateIp(address)
     )
   ) {
     throw new Error(
@@ -104,13 +91,11 @@ async function fetchPublicWebsite(
   startingUrl,
   signal
 ) {
-  let currentUrl =
-    startingUrl;
+  let currentUrl = startingUrl;
 
   for (
     let redirectCount = 0;
-    redirectCount <=
-    MAX_REDIRECTS;
+    redirectCount <= MAX_REDIRECTS;
     redirectCount += 1
   ) {
     const validatedUrl =
@@ -118,32 +103,28 @@ async function fetchPublicWebsite(
         currentUrl.toString()
       );
 
-    const response =
-      await fetch(
-        validatedUrl.toString(),
-        {
-          redirect: "manual",
+    const response = await fetch(
+      validatedUrl.toString(),
+      {
+        redirect: "manual",
+        signal,
 
-          signal,
+        headers: {
+          "User-Agent":
+            "Mordecai-Business-Check/2.0",
 
-          headers: {
-            "User-Agent":
-              "Mordecai-Business-Check/1.0",
-
-            Accept:
-              "text/html,application/xhtml+xml",
-          },
-        }
-      );
+          Accept:
+            "text/html,application/xhtml+xml",
+        },
+      }
+    );
 
     if (
       response.status >= 300 &&
       response.status < 400
     ) {
       const location =
-        response.headers.get(
-          "location"
-        );
+        response.headers.get("location");
 
       if (!location) {
         throw new Error(
@@ -152,19 +133,17 @@ async function fetchPublicWebsite(
       }
 
       if (
-        redirectCount ===
-        MAX_REDIRECTS
+        redirectCount === MAX_REDIRECTS
       ) {
         throw new Error(
           "The website redirected too many times."
         );
       }
 
-      currentUrl =
-        new URL(
-          location,
-          validatedUrl
-        );
+      currentUrl = new URL(
+        location,
+        validatedUrl
+      );
 
       continue;
     }
@@ -177,18 +156,14 @@ async function fetchPublicWebsite(
   );
 }
 
-function contains(
-  html,
-  regex
-) {
+function contains(html, regex) {
   return regex.test(html);
 }
 
 function getTitle(html) {
-  const match =
-    html.match(
-      /<title[^>]*>([\s\S]*?)<\/title>/i
-    );
+  const match = html.match(
+    /<title[^>]*>([\s\S]*?)<\/title>/i
+  );
 
   return (
     match?.[1]
@@ -197,9 +172,7 @@ function getTitle(html) {
   );
 }
 
-function getMetaDescription(
-  html
-) {
+function getMetaDescription(html) {
   const match =
     html.match(
       /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["'][^>]*>/i
@@ -215,45 +188,137 @@ function getMetaDescription(
   );
 }
 
+function getVisibleTextLength(html) {
+  const withoutScripts = html
+    .replace(
+      /<script[\s\S]*?<\/script>/gi,
+      " "
+    )
+    .replace(
+      /<style[\s\S]*?<\/style>/gi,
+      " "
+    )
+    .replace(
+      /<noscript[\s\S]*?<\/noscript>/gi,
+      " "
+    );
+
+  const text = withoutScripts
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return text.length;
+}
+
+function detectClientRendering(html) {
+  const hasAppMount = contains(
+    html,
+    /<(div|main)[^>]+id=["'](?:root|app|__next|__nuxt)["'][^>]*>/i
+  );
+
+  const hasModuleScript = contains(
+    html,
+    /<script[^>]+type=["']module["'][^>]*>/i
+  );
+
+  const hasBundledAsset = contains(
+    html,
+    /<script[^>]+src=["'][^"']*(?:assets|static|_next|build)[^"']*\.js[^"']*["']/i
+  );
+
+  const visibleTextLength =
+    getVisibleTextLength(html);
+
+  const likelyClientRendered =
+    hasAppMount &&
+    (hasModuleScript || hasBundledAsset) &&
+    visibleTextLength < 1200;
+
+  return {
+    likelyClientRendered,
+    hasAppMount,
+    hasModuleScript,
+    hasBundledAsset,
+    visibleTextLength,
+  };
+}
+
 function makeCheck({
   id,
   internalLabel,
   label,
   category,
-  passed,
+  status,
   points,
   success,
   failure,
+  unverified,
   technical = {},
 }) {
+  const passed =
+    status === "passed";
+
+  const failed =
+    status === "failed";
+
+  const isUnverified =
+    status === "unverified";
+
+  let message = failure;
+
+  if (passed) {
+    message = success;
+  }
+
+  if (isUnverified) {
+    message = unverified;
+  }
+
   return {
     id,
     internalLabel,
     label,
     category,
+    status,
     passed,
+
+    verified:
+      !isUnverified,
+
     points,
 
-    earned:
-      passed
-        ? points
-        : 0,
+    earned: passed
+      ? points
+      : failed
+        ? 0
+        : null,
 
-    message:
-      passed
-        ? success
-        : failure,
-
+    message,
     technical,
   };
 }
 
-export async function handler(
-  event
-) {
+function getStatus({
+  detected,
+  canVerify = true,
+}) {
+  if (detected) {
+    return "passed";
+  }
+
+  if (!canVerify) {
+    return "unverified";
+  }
+
+  return "failed";
+}
+
+export async function handler(event) {
   if (
-    event.httpMethod !==
-    "POST"
+    event.httpMethod !== "POST"
   ) {
     return {
       statusCode: 405,
@@ -263,11 +328,10 @@ export async function handler(
           "application/json",
       },
 
-      body:
-        JSON.stringify({
-          error:
-            "Method not allowed.",
-        }),
+      body: JSON.stringify({
+        error:
+          "Method not allowed.",
+      }),
     };
   }
 
@@ -275,11 +339,9 @@ export async function handler(
     let body;
 
     try {
-      body =
-        JSON.parse(
-          event.body ||
-            "{}"
-        );
+      body = JSON.parse(
+        event.body || "{}"
+      );
     } catch {
       return {
         statusCode: 400,
@@ -289,18 +351,16 @@ export async function handler(
             "application/json",
         },
 
-        body:
-          JSON.stringify({
-            error:
-              "Invalid request.",
-          }),
+        body: JSON.stringify({
+          error:
+            "Invalid request.",
+        }),
       };
     }
 
     if (
       !body.website ||
-      typeof body.website !==
-        "string"
+      typeof body.website !== "string"
     ) {
       return {
         statusCode: 400,
@@ -310,11 +370,10 @@ export async function handler(
             "application/json",
         },
 
-        body:
-          JSON.stringify({
-            error:
-              "Please enter a website.",
-          }),
+        body: JSON.stringify({
+          error:
+            "Please enter a website.",
+        }),
       };
     }
 
@@ -328,8 +387,7 @@ export async function handler(
 
     const timeout =
       setTimeout(
-        () =>
-          controller.abort(),
+        () => controller.abort(),
         10000
       );
 
@@ -359,9 +417,7 @@ export async function handler(
     if (
       !contentType
         .toLowerCase()
-        .includes(
-          "text/html"
-        )
+        .includes("text/html")
     ) {
       throw new Error(
         "This doesn't appear to be a normal website page."
@@ -381,9 +437,10 @@ export async function handler(
       getTitle(html);
 
     const metaDescription =
-      getMetaDescription(
-        html
-      );
+      getMetaDescription(html);
+
+    const rendering =
+      detectClientRendering(html);
 
     const hasViewport =
       contains(
@@ -412,13 +469,13 @@ export async function handler(
     const hasContactLink =
       contains(
         html,
-        /href=["'][^"']*(contact|book|reserve|order|appointment|quote)[^"']*["']/i
+        /href=["'][^"']*(contact|book|reserve|order|appointment|quote|menu|directions)[^"']*["']/i
       );
 
     const hasStrongCTA =
       contains(
         html,
-        />\s*(call|contact|book|reserve|order|get a quote|schedule|directions|visit us|shop now)\b/i
+        />\s*(call|contact|book|reserve|order|get a quote|schedule|directions|visit us|shop now|view menu|see menu|learn more)\b/i
       );
 
     const hasLocalSchema =
@@ -448,6 +505,9 @@ export async function handler(
         "https://"
       );
 
+    const canVerifyRenderedContent =
+      !rendering.likelyClientRendered;
+
     const checks = [
       makeCheck({
         id: "https",
@@ -461,8 +521,10 @@ export async function handler(
         category:
           "Trust & Credibility",
 
-        passed:
-          usesHttps,
+        status: getStatus({
+          detected:
+            usesHttps,
+        }),
 
         points: 15,
 
@@ -471,6 +533,9 @@ export async function handler(
 
         failure:
           "Your website may be missing a basic trust signal customers expect when browsing online.",
+
+        unverified:
+          "We couldn't automatically verify this trust signal.",
 
         technical: {
           usesHttps,
@@ -490,8 +555,10 @@ export async function handler(
         category:
           "Google Visibility",
 
-        passed:
-          title.length >= 10,
+        status: getStatus({
+          detected:
+            title.length >= 10,
+        }),
 
         points: 12,
 
@@ -500,6 +567,9 @@ export async function handler(
 
         failure:
           "Your website could do a better job telling search engines what your business is about.",
+
+        unverified:
+          "We couldn't automatically verify your search title.",
 
         technical: {
           title,
@@ -522,9 +592,11 @@ export async function handler(
         category:
           "Google Visibility",
 
-        passed:
-          metaDescription.length >=
-          50,
+        status: getStatus({
+          detected:
+            metaDescription.length >=
+            50,
+        }),
 
         points: 12,
 
@@ -533,6 +605,9 @@ export async function handler(
 
         failure:
           "Your search listing could use a clearer description that encourages customers to click.",
+
+        unverified:
+          "We couldn't automatically verify your search description.",
 
         technical: {
           metaDescription,
@@ -555,8 +630,10 @@ export async function handler(
         category:
           "Customer Experience",
 
-        passed:
-          hasViewport,
+        status: getStatus({
+          detected:
+            hasViewport,
+        }),
 
         points: 12,
 
@@ -565,6 +642,9 @@ export async function handler(
 
         failure:
           "Your mobile experience may need attention so customers can browse comfortably on their phones.",
+
+        unverified:
+          "We couldn't automatically verify your mobile setup.",
 
         technical: {
           hasViewport,
@@ -583,8 +663,13 @@ export async function handler(
         category:
           "Customer Experience",
 
-        passed:
-          hasH1,
+        status: getStatus({
+          detected:
+            hasH1,
+
+          canVerify:
+            canVerifyRenderedContent,
+        }),
 
         points: 10,
 
@@ -594,8 +679,15 @@ export async function handler(
         failure:
           "Your homepage could communicate what your business does more clearly at first glance.",
 
+        unverified:
+          "Your site appears to load some content after the page opens, so we couldn't reliably judge the main headline automatically.",
+
         technical: {
           hasH1,
+
+          likelyClientRendered:
+            rendering
+              .likelyClientRendered,
         },
       }),
 
@@ -612,10 +704,15 @@ export async function handler(
         category:
           "Customer Action",
 
-        passed:
-          hasPhone ||
-          hasEmail ||
-          hasContactLink,
+        status: getStatus({
+          detected:
+            hasPhone ||
+            hasEmail ||
+            hasContactLink,
+
+          canVerify:
+            canVerifyRenderedContent,
+        }),
 
         points: 12,
 
@@ -625,10 +722,17 @@ export async function handler(
         failure:
           "Make it easier for customers to call, message, book, reserve, or contact your business.",
 
+        unverified:
+          "Your site appears to load some customer actions after the page opens, so we couldn't reliably verify them automatically.",
+
         technical: {
           hasPhone,
           hasEmail,
           hasContactLink,
+
+          likelyClientRendered:
+            rendering
+              .likelyClientRendered,
         },
       }),
 
@@ -644,9 +748,14 @@ export async function handler(
         category:
           "Customer Action",
 
-        passed:
-          hasStrongCTA ||
-          hasContactLink,
+        status: getStatus({
+          detected:
+            hasStrongCTA ||
+            hasContactLink,
+
+          canVerify:
+            canVerifyRenderedContent,
+        }),
 
         points: 10,
 
@@ -656,9 +765,16 @@ export async function handler(
         failure:
           "Your website could guide customers more clearly toward calling, booking, ordering, or requesting a quote.",
 
+        unverified:
+          "Your site appears to load its buttons and actions after the page opens, so we couldn't reliably score this automatically.",
+
         technical: {
           hasStrongCTA,
           hasContactLink,
+
+          likelyClientRendered:
+            rendering
+              .likelyClientRendered,
         },
       }),
 
@@ -675,8 +791,13 @@ export async function handler(
         category:
           "Google Visibility",
 
-        passed:
-          hasLocalSchema,
+        status: getStatus({
+          detected:
+            hasLocalSchema,
+
+          canVerify:
+            canVerifyRenderedContent,
+        }),
 
         points: 7,
 
@@ -686,8 +807,15 @@ export async function handler(
         failure:
           "Your website could give search platforms clearer business information behind the scenes.",
 
+        unverified:
+          "We couldn't reliably verify whether your business information is added after the page loads.",
+
         technical: {
           hasLocalSchema,
+
+          likelyClientRendered:
+            rendering
+              .likelyClientRendered,
         },
       }),
 
@@ -704,8 +832,10 @@ export async function handler(
         category:
           "Trust & Credibility",
 
-        passed:
-          hasOpenGraph,
+        status: getStatus({
+          detected:
+            hasOpenGraph,
+        }),
 
         points: 5,
 
@@ -714,6 +844,9 @@ export async function handler(
 
         failure:
           "Shared links from your website may not look as polished as they could on social platforms.",
+
+        unverified:
+          "We couldn't automatically verify your social sharing setup.",
 
         technical: {
           hasOpenGraph,
@@ -733,8 +866,10 @@ export async function handler(
         category:
           "Trust & Credibility",
 
-        passed:
-          hasFavicon,
+        status: getStatus({
+          detected:
+            hasFavicon,
+        }),
 
         points: 5,
 
@@ -744,27 +879,96 @@ export async function handler(
         failure:
           "A small branding detail could make your website feel more polished and recognizable.",
 
+        unverified:
+          "We couldn't automatically verify this branding detail.",
+
         technical: {
           hasFavicon,
         },
       }),
     ];
 
-    const score =
-      checks.reduce(
+    /*
+     * IMPORTANT:
+     *
+     * Only VERIFIED checks affect
+     * the public score.
+     *
+     * If a React/Vite/Next/etc.
+     * website renders something
+     * after JavaScript runs and
+     * Mordecai cannot reliably see
+     * it from the initial HTML,
+     * that check becomes
+     * "unverified" instead of
+     * automatically failing.
+     */
+
+    const verifiedChecks =
+      checks.filter(
+        (check) =>
+          check.verified
+      );
+
+    const verifiedPoints =
+      verifiedChecks.reduce(
         (
           total,
           check
         ) =>
           total +
-          check.earned,
+          check.points,
         0
       );
+
+    const earnedPoints =
+      verifiedChecks.reduce(
+        (
+          total,
+          check
+        ) =>
+          total +
+          (check.earned ||
+            0),
+        0
+      );
+
+    const unverifiedPoints =
+      checks
+        .filter(
+          (check) =>
+            !check.verified
+        )
+        .reduce(
+          (
+            total,
+            check
+          ) =>
+            total +
+            check.points,
+          0
+        );
+
+    const score =
+      verifiedPoints > 0
+        ? Math.round(
+            (
+              earnedPoints /
+              verifiedPoints
+            ) *
+              100
+          )
+        : null;
 
     let grade =
       "Needs work";
 
     if (
+      score === null
+    ) {
+      grade =
+        "Not enough data";
+    } else if (
       score >= 85
     ) {
       grade =
@@ -781,11 +985,21 @@ export async function handler(
         "Room to improve";
     }
 
+    /*
+     * Only actual verified
+     * failures become customer
+     * improvement priorities.
+     *
+     * Unverified checks are NOT
+     * treated as problems.
+     */
+
     const priorities =
       checks
         .filter(
           (check) =>
-            !check.passed
+            check.status ===
+            "failed"
         )
         .sort(
           (a, b) =>
@@ -797,30 +1011,61 @@ export async function handler(
           3
         );
 
+    /*
+     * Keep the technical version
+     * for Mordecai internally.
+     *
+     * Later we can include this
+     * object in the Netlify/email
+     * submission without showing
+     * the jargon to customers.
+     */
+
     const technicalDiagnostics =
-      Object.fromEntries(
-        checks.map(
-          (check) => [
-            check.id,
+      {
+        rendering,
 
-            {
-              internalLabel:
-                check.internalLabel,
+        verifiedPoints,
 
-              passed:
-                check.passed,
+        unverifiedPoints,
 
-              points:
-                check.points,
+        earnedPoints,
 
-              earned:
-                check.earned,
+        totalPossiblePoints:
+          100,
 
-              ...check.technical,
-            },
-          ]
-        )
-      );
+        checks:
+          Object.fromEntries(
+            checks.map(
+              (check) => [
+                check.id,
+
+                {
+                  internalLabel:
+                    check
+                      .internalLabel,
+
+                  status:
+                    check.status,
+
+                  passed:
+                    check.passed,
+
+                  verified:
+                    check.verified,
+
+                  points:
+                    check.points,
+
+                  earned:
+                    check.earned,
+
+                  ...check.technical,
+                },
+              ]
+            )
+          ),
+      };
 
     return {
       statusCode: 200,
@@ -840,6 +1085,10 @@ export async function handler(
           score,
 
           grade,
+
+          verifiedPoints,
+
+          unverifiedPoints,
 
           checks,
 

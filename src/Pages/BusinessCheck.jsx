@@ -7,10 +7,12 @@ import {
 } from "react-router-dom";
 
 import {
+  AlertCircle,
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   CheckCircle2,
+  CircleHelp,
   Globe2,
   LoaderCircle,
   MapPin,
@@ -420,14 +422,25 @@ function BusinessCheck() {
     setLoadingMessage("");
   };
 
-  const failedChecks =
-    result?.checks?.filter(
-      (check) => !check.passed
-    ) || [];
-
   const passedChecks =
     result?.checks?.filter(
-      (check) => check.passed
+      (check) =>
+        check.status ===
+        "passed"
+    ) || [];
+
+  const failedChecks =
+    result?.checks?.filter(
+      (check) =>
+        check.status ===
+        "failed"
+    ) || [];
+
+  const unverifiedChecks =
+    result?.checks?.filter(
+      (check) =>
+        check.status ===
+        "unverified"
     ) || [];
 
   return (
@@ -459,8 +472,8 @@ function BusinessCheck() {
             <p className="max-w-xl text-lg leading-8 text-[#17151A]/55 lg:justify-self-end">
               Enter your business name. We'll try
               to find your website automatically,
-              then check how strong your online
-              presence looks to customers.
+              then review the signals we can
+              confidently verify.
             </p>
           </div>
         </div>
@@ -704,23 +717,34 @@ function BusinessCheck() {
               <div className="overflow-hidden rounded-[2rem] border border-black/[0.07] bg-white shadow-[0_30px_100px_rgba(23,21,26,0.06)]">
                 <div className="bg-[#7547B8] p-7 text-white sm:p-9 lg:p-10">
                   <p className="text-sm font-bold uppercase tracking-[0.16em] text-white/55">
-                    Your Online Business Score
+                    Your Online Presence Snapshot
                   </p>
 
                   <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                       <div className="flex items-end gap-2">
                         <span className="text-7xl font-bold leading-none tracking-[-0.07em]">
-                          {result.score}
+                          {result.score ?? "—"}
                         </span>
 
-                        <span className="pb-1 text-xl font-semibold text-white/45">
-                          / 100
-                        </span>
+                        {result.score !== null && (
+                          <span className="pb-1 text-xl font-semibold text-white/45">
+                            / 100
+                          </span>
+                        )}
                       </div>
 
                       <p className="mt-4 text-lg font-semibold text-[#F4F0A3]">
                         {result.grade}
+                      </p>
+
+                      <p className="mt-2 max-w-md text-sm leading-6 text-white/55">
+                        Your score only uses signals
+                        we could confidently verify.
+                        Anything we couldn't inspect
+                        automatically is left out
+                        rather than counted against
+                        you.
                       </p>
                     </div>
 
@@ -800,19 +824,69 @@ function BusinessCheck() {
                           (check) => (
                             <div
                               key={check.id}
-                              className="rounded-2xl border border-black/[0.06] bg-[#F7F5EF] p-4"
+                              className="flex items-start gap-3 rounded-2xl border border-black/[0.06] bg-[#F7F5EF] p-4"
                             >
-                              <p className="font-semibold text-[#17151A]">
-                                {
-                                  check.label
-                                }
-                              </p>
+                              <AlertCircle
+                                size={19}
+                                className="mt-0.5 shrink-0 text-[#7547B8]"
+                              />
 
-                              <p className="mt-1 text-sm leading-6 text-[#17151A]/45">
-                                {
-                                  check.message
-                                }
-                              </p>
+                              <div>
+                                <p className="font-semibold text-[#17151A]">
+                                  {
+                                    check.label
+                                  }
+                                </p>
+
+                                <p className="mt-1 text-sm leading-6 text-[#17151A]/45">
+                                  {
+                                    check.message
+                                  }
+                                </p>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {unverifiedChecks.length > 0 && (
+                    <div className="mt-10">
+                      <p className="text-xs font-bold uppercase tracking-[0.17em] text-[#17151A]/35">
+                        Couldn't verify automatically
+                      </p>
+
+                      <p className="mt-2 text-sm leading-6 text-[#17151A]/45">
+                        These items are not counted
+                        against your score.
+                      </p>
+
+                      <div className="mt-4 space-y-3">
+                        {unverifiedChecks.map(
+                          (check) => (
+                            <div
+                              key={check.id}
+                              className="flex items-start gap-3 rounded-2xl border border-black/[0.06] bg-white p-4"
+                            >
+                              <CircleHelp
+                                size={19}
+                                className="mt-0.5 shrink-0 text-[#17151A]/35"
+                              />
+
+                              <div>
+                                <p className="font-semibold text-[#17151A]">
+                                  {
+                                    check.label
+                                  }
+                                </p>
+
+                                <p className="mt-1 text-sm leading-6 text-[#17151A]/45">
+                                  {
+                                    check.message
+                                  }
+                                </p>
+                              </div>
                             </div>
                           )
                         )}
@@ -827,7 +901,7 @@ function BusinessCheck() {
                       </p>
 
                       <h3 className="mt-3 text-2xl font-bold tracking-[-0.035em]">
-                        3 ways to strengthen your
+                        Ways to strengthen your
                         online presence
                       </h3>
 
@@ -886,12 +960,13 @@ function BusinessCheck() {
                   </div>
 
                   <p className="mt-6 text-xs leading-5 text-[#17151A]/35">
-                    This automated check reviews
-                    common signals that shape how
-                    customers experience your
-                    business online. It is not a
-                    complete SEO, accessibility,
-                    security, or Google Business
+                    This automated snapshot reviews
+                    common website signals we can
+                    verify without pretending to
+                    measure everything about your
+                    business. It is not a complete
+                    SEO, accessibility, security,
+                    performance, or Google Business
                     Profile review.
                   </p>
                 </div>
@@ -934,22 +1009,24 @@ function BusinessCheck() {
                   description:
                     "How easy it is for visitors to call, book, order, message, or take the next step.",
                 },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="border-t border-white/10 pt-5 first:border-t-0 first:pt-0"
-                >
-                  <p className="font-semibold">
-                    {item.title}
-                  </p>
+              ].map(
+                (item) => (
+                  <div
+                    key={item.title}
+                    className="border-t border-white/10 pt-5 first:border-t-0 first:pt-0"
+                  >
+                    <p className="font-semibold">
+                      {item.title}
+                    </p>
 
-                  <p className="mt-2 text-sm leading-6 text-white/45">
-                    {
-                      item.description
-                    }
-                  </p>
-                </div>
-              ))}
+                    <p className="mt-2 text-sm leading-6 text-white/45">
+                      {
+                        item.description
+                      }
+                    </p>
+                  </div>
+                )
+              )}
             </div>
           </aside>
         </div>
