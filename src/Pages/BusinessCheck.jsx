@@ -12,6 +12,8 @@ import {
   ArrowRight,
   ArrowUpRight,
   CheckCircle2,
+  ChevronDown,
+  ChevronUp,
   CircleHelp,
   Globe2,
   LoaderCircle,
@@ -24,6 +26,21 @@ function BusinessCheck() {
     businessQuery,
     setBusinessQuery,
   ] = useState("");
+
+  const [
+    city,
+    setCity,
+  ] = useState("");
+
+  const [
+    state,
+    setState,
+  ] = useState("");
+
+  const [
+    showLocationFields,
+    setShowLocationFields,
+  ] = useState(false);
 
   const [
     suggestions,
@@ -272,8 +289,12 @@ function BusinessCheck() {
       setSelectedBusiness(null);
       setWebsite("");
       setLoading(true);
+
       setLoadingMessage(
-        "Finding your business..."
+        city.trim() ||
+        state.trim()
+          ? "Searching this area..."
+          : "Finding your business..."
       );
 
       try {
@@ -292,6 +313,12 @@ function BusinessCheck() {
                 JSON.stringify({
                   query:
                     businessQuery.trim(),
+
+                  city:
+                    city.trim(),
+
+                  state:
+                    state.trim(),
                 }),
             }
           );
@@ -310,8 +337,13 @@ function BusinessCheck() {
           data.status ===
           "not_found"
         ) {
+          setShowLocationFields(
+            true
+          );
+
           setError(
-            "Can\'t find it yet? Try adding the city or state, like “Green Tea Stony Brook NY.”"
+            data.hint ||
+              "Can't find it yet? Add the city and state to narrow the search."
           );
 
           return;
@@ -325,6 +357,7 @@ function BusinessCheck() {
             data.suggestions || []
           );
 
+          setError("");
           return;
         }
 
@@ -414,6 +447,11 @@ function BusinessCheck() {
 
   const resetCheck = () => {
     setBusinessQuery("");
+    setCity("");
+    setState("");
+    setShowLocationFields(
+      false
+    );
     setSuggestions([]);
     setSelectedBusiness(null);
     setWebsite("");
@@ -498,10 +536,9 @@ function BusinessCheck() {
                   </h2>
 
                   <p className="mt-3 max-w-xl leading-7 text-[#17151A]/50">
-                    Search by business name. If
-                    there are multiple locations,
-                    we'll ask you to choose the
-                    right one.
+                    Start with your business name.
+                    Add a city and state only if
+                    you need to narrow the search.
                   </p>
 
                   <label
@@ -537,15 +574,128 @@ function BusinessCheck() {
                         setWebsite("");
                         setError("");
                       }}
-                      placeholder="Jardin De China"
+                      placeholder="Green Tea"
                       autoComplete="off"
                       className="w-full rounded-2xl border border-black/10 bg-[#F7F5EF] py-4 pl-12 pr-4 text-[#17151A] outline-none transition placeholder:text-[#17151A]/30 focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
                     />
                   </div>
 
-                  <p className="mt-2 text-xs font-medium text-[#17151A]/35">
-                    United States businesses only
-                  </p>
+                  <div className="mt-3 flex items-center justify-between gap-3">
+                    <p className="text-xs font-medium text-[#17151A]/35">
+                      United States businesses only
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowLocationFields(
+                          (
+                            current
+                          ) =>
+                            !current
+                        );
+                        setError("");
+                      }}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7547B8] transition hover:text-[#6439A5]"
+                    >
+                      {showLocationFields
+                        ? "Hide location"
+                        : "Add city & state"}
+
+                      {showLocationFields ? (
+                        <ChevronUp
+                          size={14}
+                        />
+                      ) : (
+                        <ChevronDown
+                          size={14}
+                        />
+                      )}
+                    </button>
+                  </div>
+
+                  {showLocationFields && (
+                    <div className="mt-5 rounded-2xl border border-black/[0.07] bg-[#F7F5EF]/70 p-4">
+                      <div className="flex items-start gap-2">
+                        <MapPin
+                          size={17}
+                          className="mt-0.5 shrink-0 text-[#7547B8]"
+                        />
+
+                        <div>
+                          <p className="text-sm font-semibold text-[#17151A]">
+                            Narrow the search
+                          </p>
+
+                          <p className="mt-1 text-xs leading-5 text-[#17151A]/45">
+                            Example: Green Tea + Stony Brook + NY
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_0.45fr]">
+                        <div>
+                          <label
+                            htmlFor="business-city"
+                            className="block text-xs font-semibold text-[#17151A]/60"
+                          >
+                            City
+                          </label>
+
+                          <input
+                            id="business-city"
+                            type="text"
+                            value={city}
+                            onChange={(
+                              event
+                            ) => {
+                              setCity(
+                                event.target
+                                  .value
+                              );
+                              setError("");
+                              setSuggestions(
+                                []
+                              );
+                            }}
+                            placeholder="Stony Brook"
+                            autoComplete="address-level2"
+                            className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-[#17151A]/25 focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
+                          />
+                        </div>
+
+                        <div>
+                          <label
+                            htmlFor="business-state"
+                            className="block text-xs font-semibold text-[#17151A]/60"
+                          >
+                            State
+                          </label>
+
+                          <input
+                            id="business-state"
+                            type="text"
+                            value={state}
+                            onChange={(
+                              event
+                            ) => {
+                              setState(
+                                event.target
+                                  .value
+                              );
+                              setError("");
+                              setSuggestions(
+                                []
+                              );
+                            }}
+                            placeholder="NY"
+                            autoComplete="address-level1"
+                            className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm uppercase outline-none transition placeholder:text-[#17151A]/25 focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   <button
                     type="submit"

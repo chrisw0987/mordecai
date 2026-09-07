@@ -200,9 +200,7 @@ function isLikelyBusiness(place) {
       "district",
       "neighbourhood",
       "neighborhood",
-    ].includes(
-      resultType
-    );
+    ].includes(resultType);
 
   if (
     obviouslyGeographic &&
@@ -475,15 +473,24 @@ export async function handler(
     }
 
     const query =
-      parsedBody.query;
+      typeof parsedBody.query ===
+      "string"
+        ? parsedBody.query.trim()
+        : "";
 
-    if (
-      !query ||
-      typeof query !==
-        "string" ||
-      query.trim().length <
-        2
-    ) {
+    const city =
+      typeof parsedBody.city ===
+      "string"
+        ? parsedBody.city.trim()
+        : "";
+
+    const state =
+      typeof parsedBody.state ===
+      "string"
+        ? parsedBody.state.trim()
+        : "";
+
+    if (query.length < 2) {
       return {
         statusCode: 400,
 
@@ -510,10 +517,28 @@ export async function handler(
       );
     }
 
+    /*
+     * Keep the business name separate
+     * for Mordecai's name matching.
+     *
+     * City and state are only used
+     * to narrow Geoapify's search.
+     *
+     * Example:
+     * Green Tea, Stony Brook, NY
+     */
+    const searchText =
+      [
+        query,
+        city,
+        state,
+      ]
+        .filter(Boolean)
+        .join(", ");
+
     const params =
       new URLSearchParams({
-        text:
-          query.trim(),
+        text: searchText,
 
         format:
           "json",
@@ -525,10 +550,9 @@ export async function handler(
           "en",
 
         /*
-         * Important:
-         * search businesses /
-         * amenities instead of
-         * cities and streets.
+         * Search for businesses /
+         * amenities rather than
+         * generic locations.
          */
         type:
           "amenity",
@@ -599,19 +623,21 @@ export async function handler(
 
     const suggestions =
       (data.results || [])
+
         /*
-         * Remove obvious
-         * geography results.
+         * Remove cities, streets,
+         * counties, etc.
          */
         .filter(
           isLikelyBusiness
         )
 
         /*
-         * Calculate how closely
-         * each returned name
-         * matches what the user
-         * actually typed.
+         * Compare results against
+         * the BUSINESS NAME only.
+         *
+         * City/state do not hurt
+         * name similarity.
          */
         .map(
           (place) =>
@@ -622,8 +648,9 @@ export async function handler(
         )
 
         /*
-         * Keep only useful
-         * US business matches.
+         * Keep useful US results
+         * with a reasonable name
+         * match.
          */
         .filter(
           (place) =>
@@ -636,9 +663,8 @@ export async function handler(
         )
 
         /*
-         * Business-name relevance
-         * matters much more than
-         * Geoapify's generic
+         * Prioritize the business
+         * name over generic
          * geographic confidence.
          */
         .sort(
@@ -653,7 +679,7 @@ export async function handler(
         );
 
     /*
-     * Nothing useful found.
+     * No useful business found.
      */
     if (
       suggestions.length ===
@@ -675,15 +701,19 @@ export async function handler(
             suggestions: [],
 
             hint:
-              "Try adding the city or state, like “Green Tea Stony Brook NY.”",
+              city || state
+                ? "We still couldn't find a strong business match. Double-check the business name or try a nearby city."
+                : "Add the city and state to narrow the search.",
           }),
       };
     }
 
     /*
-     * Don't silently guess when
-     * several businesses could
+     * Several businesses could
      * reasonably match.
+     *
+     * Let the customer choose
+     * rather than guessing.
      */
     if (
       !shouldAutoSelect(
@@ -710,16 +740,16 @@ export async function handler(
               ),
 
             hint:
-              "Choose the right location, or add a city or state to narrow the search.",
+              "Choose the right location from the matches below.",
           }),
       };
     }
 
     /*
-     * Strong match:
-     * fetch the full business
-     * record so we can attempt
-     * to find its website.
+     * Strong business match.
+     * Get the full place details
+     * so we can look for its
+     * website.
      */
     const business =
       await getPlaceDetails(
@@ -729,9 +759,12 @@ export async function handler(
       );
 
     /*
-     * Geoapify knows the business
-     * but doesn't have a website
-     * stored for it.
+     * We found the business,
+     * but Geoapify does not have
+     * its website.
+     *
+     * Frontend will ask the user
+     * to enter it manually.
      */
     if (
       !business.website
@@ -756,7 +789,7 @@ export async function handler(
 
     /*
      * Best case:
-     * business + website found.
+     * business and website found.
      */
     return {
       statusCode: 200,
