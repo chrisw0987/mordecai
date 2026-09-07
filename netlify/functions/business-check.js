@@ -8,11 +8,9 @@ function isPrivateIp(ip) {
   if (!ip) return true;
 
   if (net.isIPv4(ip)) {
-    const parts = ip
+    const [a, b] = ip
       .split(".")
       .map(Number);
-
-    const [a, b] = parts;
 
     return (
       a === 10 ||
@@ -48,12 +46,8 @@ async function validatePublicUrl(
     value.trim();
 
   if (
-    !input.startsWith(
-      "http://"
-    ) &&
-    !input.startsWith(
-      "https://"
-    )
+    !input.startsWith("http://") &&
+    !input.startsWith("https://")
   ) {
     input =
       `https://${input}`;
@@ -72,15 +66,11 @@ async function validatePublicUrl(
   }
 
   const hostname =
-    url.hostname
-      .toLowerCase();
+    url.hostname.toLowerCase();
 
   if (
-    hostname ===
-      "localhost" ||
-    hostname.endsWith(
-      ".local"
-    )
+    hostname === "localhost" ||
+    hostname.endsWith(".local")
   ) {
     throw new Error(
       "That website cannot be checked."
@@ -99,9 +89,7 @@ async function validatePublicUrl(
     !addresses.length ||
     addresses.some(
       ({ address }) =>
-        isPrivateIp(
-          address
-        )
+        isPrivateIp(address)
     )
   ) {
     throw new Error(
@@ -134,8 +122,7 @@ async function fetchPublicWebsite(
       await fetch(
         validatedUrl.toString(),
         {
-          redirect:
-            "manual",
+          redirect: "manual",
 
           signal,
 
@@ -205,10 +192,7 @@ function getTitle(html) {
 
   return (
     match?.[1]
-      ?.replace(
-        /\s+/g,
-        " "
-      )
+      ?.replace(/\s+/g, " ")
       ?.trim() || ""
   );
 }
@@ -226,25 +210,25 @@ function getMetaDescription(
 
   return (
     match?.[1]
-      ?.replace(
-        /\s+/g,
-        " "
-      )
+      ?.replace(/\s+/g, " ")
       ?.trim() || ""
   );
 }
 
 function makeCheck({
   id,
+  internalLabel,
   label,
   category,
   passed,
   points,
   success,
   failure,
+  technical = {},
 }) {
   return {
     id,
+    internalLabel,
     label,
     category,
     passed,
@@ -259,6 +243,8 @@ function makeCheck({
       passed
         ? success
         : failure,
+
+    technical,
   };
 }
 
@@ -465,9 +451,15 @@ export async function handler(
     const checks = [
       makeCheck({
         id: "https",
+
+        internalLabel:
+          "HTTPS",
+
         label:
-          "Secure website",
-        category: "Trust",
+          "Customer Trust & Safety",
+
+        category:
+          "Trust & Credibility",
 
         passed:
           usesHttps,
@@ -475,41 +467,60 @@ export async function handler(
         points: 15,
 
         success:
-          "Your site uses HTTPS.",
+          "Your website gives visitors a secure, trustworthy experience.",
 
         failure:
-          "Your site should use HTTPS to protect visitors and build trust.",
+          "Your website may be missing a basic trust signal customers expect when browsing online.",
+
+        technical: {
+          usesHttps,
+          finalUrl,
+        },
       }),
 
       makeCheck({
         id: "title",
+
+        internalLabel:
+          "HTML page title",
+
         label:
-          "Page title",
+          "Google Search Presence",
+
         category:
-          "Findability",
+          "Google Visibility",
 
         passed:
-          title.length >=
-          10,
+          title.length >= 10,
 
         points: 12,
 
         success:
-          "Your homepage has a descriptive page title.",
+          "Your website gives search engines a clear idea of who you are.",
 
         failure:
-          "Your homepage needs a clearer page title.",
+          "Your website could do a better job telling search engines what your business is about.",
+
+        technical: {
+          title,
+
+          titleLength:
+            title.length,
+        },
       }),
 
       makeCheck({
         id:
           "description",
 
+        internalLabel:
+          "Meta description",
+
         label:
-          "Search description",
+          "Search Result Appeal",
 
         category:
-          "Findability",
+          "Google Visibility",
 
         passed:
           metaDescription.length >=
@@ -518,18 +529,31 @@ export async function handler(
         points: 12,
 
         success:
-          "A search description is present.",
+          "Your website has a strong description that can help customers understand your business in search results.",
 
         failure:
-          "Add a useful meta description explaining what the business offers.",
+          "Your search listing could use a clearer description that encourages customers to click.",
+
+        technical: {
+          metaDescription,
+
+          metaDescriptionLength:
+            metaDescription.length,
+        },
       }),
 
       makeCheck({
-        id: "viewport",
+        id:
+          "viewport",
+
+        internalLabel:
+          "Viewport meta tag",
+
         label:
-          "Mobile setup",
+          "Mobile Friendly",
+
         category:
-          "Experience",
+          "Customer Experience",
 
         passed:
           hasViewport,
@@ -537,20 +561,27 @@ export async function handler(
         points: 12,
 
         success:
-          "Mobile viewport setup was detected.",
+          "Your website is set up for customers browsing from their phones.",
 
         failure:
-          "We couldn't detect standard mobile viewport configuration.",
+          "Your mobile experience may need attention so customers can browse comfortably on their phones.",
+
+        technical: {
+          hasViewport,
+        },
       }),
 
       makeCheck({
         id: "h1",
 
+        internalLabel:
+          "H1 heading",
+
         label:
-          "Clear main heading",
+          "Clear First Impression",
 
         category:
-          "Findability",
+          "Customer Experience",
 
         passed:
           hasH1,
@@ -558,20 +589,28 @@ export async function handler(
         points: 10,
 
         success:
-          "Your page has a main heading.",
+          "Your homepage gives visitors a clear first impression.",
 
         failure:
-          "Add a clear main heading that immediately explains the business.",
+          "Your homepage could communicate what your business does more clearly at first glance.",
+
+        technical: {
+          hasH1,
+        },
       }),
 
       makeCheck({
-        id: "contact",
+        id:
+          "contact",
+
+        internalLabel:
+          "Contact/action links",
 
         label:
-          "Easy to contact",
+          "Easy to Reach",
 
         category:
-          "Conversion",
+          "Customer Action",
 
         passed:
           hasPhone ||
@@ -581,20 +620,29 @@ export async function handler(
         points: 12,
 
         success:
-          "We found a clear way for customers to contact or take action.",
+          "Customers have an easy way to reach you or take the next step.",
 
         failure:
-          "Make your phone, contact, booking, or ordering action easier to find.",
+          "Make it easier for customers to call, message, book, reserve, or contact your business.",
+
+        technical: {
+          hasPhone,
+          hasEmail,
+          hasContactLink,
+        },
       }),
 
       makeCheck({
         id: "cta",
 
+        internalLabel:
+          "CTA detection",
+
         label:
-          "Clear next step",
+          "Strong Call to Action",
 
         category:
-          "Conversion",
+          "Customer Action",
 
         passed:
           hasStrongCTA ||
@@ -606,17 +654,26 @@ export async function handler(
           "Your website gives visitors a clear next step.",
 
         failure:
-          "Use a stronger primary action such as Call, Book, Order, or Get a Quote.",
+          "Your website could guide customers more clearly toward calling, booking, ordering, or requesting a quote.",
+
+        technical: {
+          hasStrongCTA,
+          hasContactLink,
+        },
       }),
 
       makeCheck({
-        id: "schema",
+        id:
+          "schema",
+
+        internalLabel:
+          "LocalBusiness JSON-LD",
 
         label:
-          "Local business data",
+          "Google-Friendly Business Info",
 
         category:
-          "Findability",
+          "Google Visibility",
 
         passed:
           hasLocalSchema,
@@ -624,19 +681,28 @@ export async function handler(
         points: 7,
 
         success:
-          "Local-business structured data was detected.",
+          "Your website is set up in a way that can help search platforms understand your business.",
 
         failure:
-          "Consider adding LocalBusiness structured data to help search engines understand the business.",
+          "Your website could give search platforms clearer business information behind the scenes.",
+
+        technical: {
+          hasLocalSchema,
+        },
       }),
 
       makeCheck({
-        id: "social",
+        id:
+          "social",
+
+        internalLabel:
+          "Open Graph metadata",
 
         label:
-          "Share preview",
+          "Social Media Ready",
 
-        category: "Trust",
+        category:
+          "Trust & Credibility",
 
         passed:
           hasOpenGraph,
@@ -644,20 +710,28 @@ export async function handler(
         points: 5,
 
         success:
-          "Social sharing metadata was detected.",
+          "Your website is prepared to look polished when shared online.",
 
         failure:
-          "Add Open Graph metadata so shared links look more polished.",
+          "Shared links from your website may not look as polished as they could on social platforms.",
+
+        technical: {
+          hasOpenGraph,
+        },
       }),
 
       makeCheck({
         id:
           "favicon",
 
-        label:
-          "Browser icon",
+        internalLabel:
+          "Favicon",
 
-        category: "Trust",
+        label:
+          "Professional Branding",
+
+        category:
+          "Trust & Credibility",
 
         passed:
           hasFavicon,
@@ -665,10 +739,14 @@ export async function handler(
         points: 5,
 
         success:
-          "A favicon was detected.",
+          "Your website includes a small branding detail that helps it feel complete.",
 
         failure:
-          "Adding a favicon makes the site feel more complete and recognizable.",
+          "A small branding detail could make your website feel more polished and recognizable.",
+
+        technical: {
+          hasFavicon,
+        },
       }),
     ];
 
@@ -719,6 +797,31 @@ export async function handler(
           3
         );
 
+    const technicalDiagnostics =
+      Object.fromEntries(
+        checks.map(
+          (check) => [
+            check.id,
+
+            {
+              internalLabel:
+                check.internalLabel,
+
+              passed:
+                check.passed,
+
+              points:
+                check.points,
+
+              earned:
+                check.earned,
+
+              ...check.technical,
+            },
+          ]
+        )
+      );
+
     return {
       statusCode: 200,
 
@@ -741,6 +844,8 @@ export async function handler(
           checks,
 
           priorities,
+
+          technicalDiagnostics,
         }),
     };
   } catch (error) {
