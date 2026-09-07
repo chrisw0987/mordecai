@@ -1,7 +1,10 @@
-exports.handler = async (event) => {
+export async function handler(event) {
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         error: "Method not allowed.",
       }),
@@ -19,6 +22,9 @@ exports.handler = async (event) => {
     ) {
       return {
         statusCode: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           suggestions: [],
         }),
@@ -29,9 +35,16 @@ exports.handler = async (event) => {
       process.env.GEOAPIFY_API_KEY;
 
     if (!apiKey) {
-      throw new Error(
-        "Geoapify API key is not configured."
-      );
+      return {
+        statusCode: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          error:
+            "GEOAPIFY_API_KEY is missing from Netlify.",
+        }),
+      };
     }
 
     const params =
@@ -40,15 +53,9 @@ exports.handler = async (event) => {
         format: "json",
         limit: "6",
         lang: "en",
+        filter: "countrycode:us",
         apiKey,
       });
-
-    // Since Mordecai is currently focused on U.S.
-    // local businesses, this improves relevance.
-    params.set(
-      "filter",
-      "countrycode:us"
-    );
 
     const url =
       `https://api.geoapify.com/v1/geocode/autocomplete?${params.toString()}`;
@@ -56,69 +63,96 @@ exports.handler = async (event) => {
     const response =
       await fetch(url);
 
-    const data =
-      await response.json();
+    const rawBody =
+      await response.text();
+
+    console.log(
+      "Geoapify status:",
+      response.status
+    );
 
     if (!response.ok) {
       console.error(
-        "Geoapify autocomplete error:",
-        data
+        "Geoapify response:",
+        rawBody
       );
 
-      throw new Error(
-        "Could not search businesses."
-      );
+      return {
+        statusCode: 502,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          error:
+            `Geoapify returned ${response.status}.`,
+          details:
+            rawBody.slice(0, 1000),
+        }),
+      };
+    }
+
+    let data;
+
+    try {
+      data =
+        JSON.parse(rawBody);
+    } catch {
+      return {
+        statusCode: 502,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          error:
+            "Geoapify returned invalid JSON.",
+        }),
+      };
     }
 
     const suggestions =
       (data.results || [])
-        .filter((place) => {
-          // Prioritize things that actually
-          // look like named places/businesses.
-          return Boolean(
+        .filter(
+          (place) =>
             place.name ||
-            place.address_line1
-          );
-        })
-        .map((place) => {
-          return {
-            placeId:
-              place.place_id || "",
+            place.address_line1 ||
+            place.formatted
+        )
+        .map((place) => ({
+          placeId:
+            place.place_id || "",
 
-            name:
-              place.name ||
-              place.address_line1 ||
-              place.formatted ||
-              "",
+          name:
+            place.name ||
+            place.address_line1 ||
+            place.formatted ||
+            "",
 
-            address:
-              place.formatted || "",
+          address:
+            place.formatted || "",
 
-            city:
-              place.city || "",
+          city:
+            place.city || "",
 
-            state:
-              place.state || "",
+          state:
+            place.state || "",
 
-            postcode:
-              place.postcode || "",
+          postcode:
+            place.postcode || "",
 
-            country:
-              place.country || "",
+          country:
+            place.country || "",
 
-            latitude:
-              place.lat ?? null,
+          latitude:
+            place.lat ?? null,
 
-            longitude:
-              place.lon ?? null,
-          };
-        });
+          longitude:
+            place.lon ?? null,
+        }));
 
     return {
       statusCode: 200,
       headers: {
-        "Content-Type":
-          "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         suggestions,
@@ -126,17 +160,20 @@ exports.handler = async (event) => {
     };
   } catch (error) {
     console.error(
-      "Autocomplete function error:",
+      "Autocomplete function crashed:",
       error
     );
 
     return {
       statusCode: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         error:
           error.message ||
-          "Could not search businesses.",
+          "Autocomplete function failed.",
       }),
     };
   }
-};
+}

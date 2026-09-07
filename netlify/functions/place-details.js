@@ -1,4 +1,4 @@
-exports.handler = async (event) => {
+export async function handler(event) {
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
@@ -27,9 +27,13 @@ exports.handler = async (event) => {
       process.env.GEOAPIFY_API_KEY;
 
     if (!apiKey) {
-      throw new Error(
-        "Geoapify API key is not configured."
-      );
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error:
+            "GEOAPIFY_API_KEY is missing from Netlify.",
+        }),
+      };
     }
 
     const params =
@@ -45,19 +49,28 @@ exports.handler = async (event) => {
     const response =
       await fetch(url);
 
-    const data =
-      await response.json();
+    const rawBody =
+      await response.text();
 
     if (!response.ok) {
       console.error(
-        "Geoapify place details error:",
-        data
+        "Geoapify place details response:",
+        rawBody
       );
 
-      throw new Error(
-        "Could not load business details."
-      );
+      return {
+        statusCode: 502,
+        body: JSON.stringify({
+          error:
+            `Geoapify returned ${response.status}.`,
+          details:
+            rawBody.slice(0, 1000),
+        }),
+      };
     }
+
+    const data =
+      JSON.parse(rawBody);
 
     const feature =
       data.features?.[0];
@@ -84,8 +97,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        "Content-Type":
-          "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         placeId,
@@ -118,12 +130,10 @@ exports.handler = async (event) => {
         email,
 
         latitude:
-          properties.lat ??
-          null,
+          properties.lat ?? null,
 
         longitude:
-          properties.lon ??
-          null,
+          properties.lon ?? null,
 
         categories:
           properties.categories ||
@@ -132,7 +142,7 @@ exports.handler = async (event) => {
     };
   } catch (error) {
     console.error(
-      "Place details function error:",
+      "Place details function crashed:",
       error
     );
 
@@ -145,4 +155,4 @@ exports.handler = async (event) => {
       }),
     };
   }
-};
+}

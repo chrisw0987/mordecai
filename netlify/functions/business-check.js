@@ -1,7 +1,8 @@
-const dns = require("node:dns").promises;
-const net = require("node:net");
+import dns from "node:dns/promises";
+import net from "node:net";
 
 const MAX_HTML_LENGTH = 1_500_000;
+const MAX_REDIRECTS = 5;
 
 function isPrivateIp(ip) {
   if (!ip) return true;
@@ -18,13 +19,16 @@ function isPrivateIp(ip) {
       a === 127 ||
       a === 0 ||
       (a === 169 && b === 254) ||
-      (a === 172 && b >= 16 && b <= 31) ||
+      (a === 172 &&
+        b >= 16 &&
+        b <= 31) ||
       (a === 192 && b === 168)
     );
   }
 
   if (net.isIPv6(ip)) {
-    const lower = ip.toLowerCase();
+    const lower =
+      ip.toLowerCase();
 
     return (
       lower === "::1" ||
@@ -37,17 +41,26 @@ function isPrivateIp(ip) {
   return true;
 }
 
-async function validatePublicUrl(value) {
-  let input = value.trim();
+async function validatePublicUrl(
+  value
+) {
+  let input =
+    value.trim();
 
   if (
-    !input.startsWith("http://") &&
-    !input.startsWith("https://")
+    !input.startsWith(
+      "http://"
+    ) &&
+    !input.startsWith(
+      "https://"
+    )
   ) {
-    input = `https://${input}`;
+    input =
+      `https://${input}`;
   }
 
-  const url = new URL(input);
+  const url =
+    new URL(input);
 
   if (
     url.protocol !== "http:" &&
@@ -58,9 +71,16 @@ async function validatePublicUrl(value) {
     );
   }
 
+  const hostname =
+    url.hostname
+      .toLowerCase();
+
   if (
-    url.hostname === "localhost" ||
-    url.hostname.endsWith(".local")
+    hostname ===
+      "localhost" ||
+    hostname.endsWith(
+      ".local"
+    )
   ) {
     throw new Error(
       "That website cannot be checked."
@@ -69,7 +89,7 @@ async function validatePublicUrl(value) {
 
   const addresses =
     await dns.lookup(
-      url.hostname,
+      hostname,
       {
         all: true,
       }
@@ -79,7 +99,9 @@ async function validatePublicUrl(value) {
     !addresses.length ||
     addresses.some(
       ({ address }) =>
-        isPrivateIp(address)
+        isPrivateIp(
+          address
+        )
     )
   ) {
     throw new Error(
@@ -90,21 +112,110 @@ async function validatePublicUrl(value) {
   return url;
 }
 
-function contains(html, regex) {
+async function fetchPublicWebsite(
+  startingUrl,
+  signal
+) {
+  let currentUrl =
+    startingUrl;
+
+  for (
+    let redirectCount = 0;
+    redirectCount <=
+    MAX_REDIRECTS;
+    redirectCount += 1
+  ) {
+    const validatedUrl =
+      await validatePublicUrl(
+        currentUrl.toString()
+      );
+
+    const response =
+      await fetch(
+        validatedUrl.toString(),
+        {
+          redirect:
+            "manual",
+
+          signal,
+
+          headers: {
+            "User-Agent":
+              "Mordecai-Business-Check/1.0",
+
+            Accept:
+              "text/html,application/xhtml+xml",
+          },
+        }
+      );
+
+    if (
+      response.status >= 300 &&
+      response.status < 400
+    ) {
+      const location =
+        response.headers.get(
+          "location"
+        );
+
+      if (!location) {
+        throw new Error(
+          "The website returned an invalid redirect."
+        );
+      }
+
+      if (
+        redirectCount ===
+        MAX_REDIRECTS
+      ) {
+        throw new Error(
+          "The website redirected too many times."
+        );
+      }
+
+      currentUrl =
+        new URL(
+          location,
+          validatedUrl
+        );
+
+      continue;
+    }
+
+    return response;
+  }
+
+  throw new Error(
+    "The website redirected too many times."
+  );
+}
+
+function contains(
+  html,
+  regex
+) {
   return regex.test(html);
 }
 
 function getTitle(html) {
-  const match = html.match(
-    /<title[^>]*>([\s\S]*?)<\/title>/i
-  );
+  const match =
+    html.match(
+      /<title[^>]*>([\s\S]*?)<\/title>/i
+    );
 
-  return match?.[1]
-    ?.replace(/\s+/g, " ")
-    ?.trim() || "";
+  return (
+    match?.[1]
+      ?.replace(
+        /\s+/g,
+        " "
+      )
+      ?.trim() || ""
+  );
 }
 
-function getMetaDescription(html) {
+function getMetaDescription(
+  html
+) {
   const match =
     html.match(
       /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["'][^>]*>/i
@@ -115,7 +226,10 @@ function getMetaDescription(html) {
 
   return (
     match?.[1]
-      ?.replace(/\s+/g, " ")
+      ?.replace(
+        /\s+/g,
+        " "
+      )
       ?.trim() || ""
   );
 }
@@ -135,39 +249,86 @@ function makeCheck({
     category,
     passed,
     points,
-    earned: passed
-      ? points
-      : 0,
-    message: passed
-      ? success
-      : failure,
+
+    earned:
+      passed
+        ? points
+        : 0,
+
+    message:
+      passed
+        ? success
+        : failure,
   };
 }
 
-exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
+export async function handler(
+  event
+) {
+  if (
+    event.httpMethod !==
+    "POST"
+  ) {
     return {
       statusCode: 405,
-      body: JSON.stringify({
-        error:
-          "Method not allowed.",
-      }),
+
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+
+      body:
+        JSON.stringify({
+          error:
+            "Method not allowed.",
+        }),
     };
   }
 
   try {
-    const body =
-      JSON.parse(
-        event.body || "{}"
-      );
+    let body;
 
-    if (!body.website) {
+    try {
+      body =
+        JSON.parse(
+          event.body ||
+            "{}"
+        );
+    } catch {
       return {
         statusCode: 400,
-        body: JSON.stringify({
-          error:
-            "Please enter a website.",
-        }),
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body:
+          JSON.stringify({
+            error:
+              "Invalid request.",
+          }),
+      };
+    }
+
+    if (
+      !body.website ||
+      typeof body.website !==
+        "string"
+    ) {
+      return {
+        statusCode: 400,
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body:
+          JSON.stringify({
+            error:
+              "Please enter a website.",
+          }),
       };
     }
 
@@ -189,20 +350,11 @@ exports.handler = async (event) => {
     let response;
 
     try {
-      response = await fetch(
-        url.toString(),
-        {
-          redirect: "follow",
-          signal:
-            controller.signal,
-          headers: {
-            "User-Agent":
-              "Mordecai-Business-Check/1.0",
-            Accept:
-              "text/html,application/xhtml+xml",
-          },
-        }
-      );
+      response =
+        await fetchPublicWebsite(
+          url,
+          controller.signal
+        );
     } finally {
       clearTimeout(timeout);
     }
@@ -219,9 +371,11 @@ exports.handler = async (event) => {
       ) || "";
 
     if (
-      !contentType.includes(
-        "text/html"
-      )
+      !contentType
+        .toLowerCase()
+        .includes(
+          "text/html"
+        )
     ) {
       throw new Error(
         "This doesn't appear to be a normal website page."
@@ -314,11 +468,15 @@ exports.handler = async (event) => {
         label:
           "Secure website",
         category: "Trust",
+
         passed:
           usesHttps,
+
         points: 15,
+
         success:
           "Your site uses HTTPS.",
+
         failure:
           "Your site should use HTTPS to protect visitors and build trust.",
       }),
@@ -329,27 +487,39 @@ exports.handler = async (event) => {
           "Page title",
         category:
           "Findability",
+
         passed:
-          title.length >= 10,
+          title.length >=
+          10,
+
         points: 12,
+
         success:
           "Your homepage has a descriptive page title.",
+
         failure:
           "Your homepage needs a clearer page title.",
       }),
 
       makeCheck({
-        id: "description",
+        id:
+          "description",
+
         label:
           "Search description",
+
         category:
           "Findability",
+
         passed:
           metaDescription.length >=
           50,
+
         points: 12,
+
         success:
           "A search description is present.",
+
         failure:
           "Add a useful meta description explaining what the business offers.",
       }),
@@ -360,102 +530,143 @@ exports.handler = async (event) => {
           "Mobile setup",
         category:
           "Experience",
+
         passed:
           hasViewport,
+
         points: 12,
+
         success:
           "Mobile viewport setup was detected.",
+
         failure:
           "We couldn't detect standard mobile viewport configuration.",
       }),
 
       makeCheck({
         id: "h1",
+
         label:
           "Clear main heading",
+
         category:
           "Findability",
+
         passed:
           hasH1,
+
         points: 10,
+
         success:
           "Your page has a main heading.",
+
         failure:
           "Add a clear main heading that immediately explains the business.",
       }),
 
       makeCheck({
         id: "contact",
+
         label:
           "Easy to contact",
+
         category:
           "Conversion",
+
         passed:
           hasPhone ||
           hasEmail ||
           hasContactLink,
+
         points: 12,
+
         success:
           "We found a clear way for customers to contact or take action.",
+
         failure:
           "Make your phone, contact, booking, or ordering action easier to find.",
       }),
 
       makeCheck({
         id: "cta",
+
         label:
           "Clear next step",
+
         category:
           "Conversion",
+
         passed:
           hasStrongCTA ||
           hasContactLink,
+
         points: 10,
+
         success:
           "Your website gives visitors a clear next step.",
+
         failure:
           "Use a stronger primary action such as Call, Book, Order, or Get a Quote.",
       }),
 
       makeCheck({
         id: "schema",
+
         label:
           "Local business data",
+
         category:
           "Findability",
+
         passed:
           hasLocalSchema,
+
         points: 7,
+
         success:
           "Local-business structured data was detected.",
+
         failure:
           "Consider adding LocalBusiness structured data to help search engines understand the business.",
       }),
 
       makeCheck({
         id: "social",
+
         label:
           "Share preview",
+
         category: "Trust",
+
         passed:
           hasOpenGraph,
+
         points: 5,
+
         success:
           "Social sharing metadata was detected.",
+
         failure:
           "Add Open Graph metadata so shared links look more polished.",
       }),
 
       makeCheck({
-        id: "favicon",
+        id:
+          "favicon",
+
         label:
           "Browser icon",
+
         category: "Trust",
+
         passed:
           hasFavicon,
+
         points: 5,
+
         success:
           "A favicon was detected.",
+
         failure:
           "Adding a favicon makes the site feel more complete and recognizable.",
       }),
@@ -463,7 +674,10 @@ exports.handler = async (event) => {
 
     const score =
       checks.reduce(
-        (total, check) =>
+        (
+          total,
+          check
+        ) =>
           total +
           check.earned,
         0
@@ -472,12 +686,16 @@ exports.handler = async (event) => {
     let grade =
       "Needs work";
 
-    if (score >= 85) {
-      grade = "Strong";
+    if (
+      score >= 85
+    ) {
+      grade =
+        "Strong";
     } else if (
       score >= 70
     ) {
-      grade = "Good";
+      grade =
+        "Good";
     } else if (
       score >= 50
     ) {
@@ -496,23 +714,34 @@ exports.handler = async (event) => {
             b.points -
             a.points
         )
-        .slice(0, 3);
+        .slice(
+          0,
+          3
+        );
 
     return {
       statusCode: 200,
+
       headers: {
         "Content-Type":
           "application/json",
       },
-      body: JSON.stringify({
-        website:
-          finalUrl,
-        title,
-        score,
-        grade,
-        checks,
-        priorities,
-      }),
+
+      body:
+        JSON.stringify({
+          website:
+            finalUrl,
+
+          title,
+
+          score,
+
+          grade,
+
+          checks,
+
+          priorities,
+        }),
     };
   } catch (error) {
     console.error(
@@ -522,14 +751,21 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 400,
-      body: JSON.stringify({
-        error:
-          error.name ===
-          "AbortError"
-            ? "The website took too long to respond."
-            : error.message ||
-              "We couldn't check that website.",
-      }),
+
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+
+      body:
+        JSON.stringify({
+          error:
+            error.name ===
+            "AbortError"
+              ? "The website took too long to respond."
+              : error.message ||
+                "We couldn't check that website.",
+        }),
     };
   }
-};
+}

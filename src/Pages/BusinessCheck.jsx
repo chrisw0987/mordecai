@@ -1014,15 +1014,14 @@ function BusinessCheck() {
 
                           <button
                             type="button"
-                            onClick={() =>
-                              setSelectedBusiness(
-                                {
-                                  ...selectedBusiness,
-                                  website:
-                                    "",
-                                }
-                              )
-                            }
+                            onClick={() => {
+                              setSelectedBusiness({
+                                ...selectedBusiness,
+                                website: "",
+                              });
+
+                              setWebsite("");
+                            }}
                             className="
                               mt-2
                               bg-transparent
@@ -1355,7 +1354,7 @@ function BusinessCheck() {
                                   }
                                 </p>
 
-                                {check.description && (
+                                {check.message && (
                                   <p
                                     className="
                                       mt-1
@@ -1365,7 +1364,7 @@ function BusinessCheck() {
                                     "
                                   >
                                     {
-                                      check.description
+                                      check.message
                                     }
                                   </p>
                                 )}
@@ -1459,7 +1458,7 @@ function BusinessCheck() {
                                     }
                                   </p>
 
-                                  {check.description && (
+                                  {check.message && (
                                     <p
                                       className="
                                         mt-1
@@ -1469,7 +1468,7 @@ function BusinessCheck() {
                                       "
                                     >
                                       {
-                                        check.description
+                                        check.message
                                       }
                                     </p>
                                   )}
@@ -1558,7 +1557,7 @@ function BusinessCheck() {
                                     priority.title}
                                 </p>
 
-                                {priority.description && (
+                                {priority.message && (
                                   <p
                                     className="
                                       mt-1
@@ -1568,7 +1567,7 @@ function BusinessCheck() {
                                     "
                                   >
                                     {
-                                      priority.description
+                                      priority.message
                                     }
                                   </p>
                                 )}
