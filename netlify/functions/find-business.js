@@ -4,18 +4,242 @@ const GEOAPIFY_AUTOCOMPLETE =
 const GEOAPIFY_DETAILS =
   "https://api.geoapify.com/v2/place-details";
 
-function normalizeSuggestion(
-  place
+const STOP_WORDS = new Set([
+  "the",
+  "and",
+  "of",
+  "at",
+  "in",
+  "on",
+  "a",
+  "an",
+  "llc",
+  "inc",
+  "corp",
+  "company",
+  "co",
+]);
+
+function normalizeText(value = "") {
+  return value
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^\w\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokenize(value = "") {
+  return normalizeText(value)
+    .split(" ")
+    .filter(
+      (token) =>
+        token &&
+        !STOP_WORDS.has(token)
+    );
+}
+
+function getNameSimilarity(
+  query,
+  name
 ) {
+  const normalizedQuery =
+    normalizeText(query);
+
+  const normalizedName =
+    normalizeText(name);
+
+  if (
+    !normalizedQuery ||
+    !normalizedName
+  ) {
+    return 0;
+  }
+
+  if (
+    normalizedName ===
+    normalizedQuery
+  ) {
+    return 1;
+  }
+
+  if (
+    normalizedName.startsWith(
+      normalizedQuery
+    )
+  ) {
+    return 0.96;
+  }
+
+  if (
+    normalizedName.includes(
+      normalizedQuery
+    )
+  ) {
+    return 0.92;
+  }
+
+  const queryTokens =
+    tokenize(query);
+
+  const nameTokens =
+    tokenize(name);
+
+  if (
+    queryTokens.length === 0 ||
+    nameTokens.length === 0
+  ) {
+    return 0;
+  }
+
+  let weightedMatches = 0;
+  let totalWeight = 0;
+
+  for (
+    const queryToken
+    of queryTokens
+  ) {
+    const weight =
+      Math.max(
+        queryToken.length,
+        1
+      );
+
+    totalWeight += weight;
+
+    const exactMatch =
+      nameTokens.includes(
+        queryToken
+      );
+
+    const partialMatch =
+      nameTokens.some(
+        (nameToken) =>
+          nameToken.startsWith(
+            queryToken
+          ) ||
+          queryToken.startsWith(
+            nameToken
+          )
+      );
+
+    if (exactMatch) {
+      weightedMatches +=
+        weight;
+    } else if (
+      partialMatch
+    ) {
+      weightedMatches +=
+        weight * 0.7;
+    }
+  }
+
+  const coverage =
+    totalWeight > 0
+      ? weightedMatches /
+        totalWeight
+      : 0;
+
+  const nameCoverage =
+    nameTokens.length > 0
+      ? queryTokens.filter(
+          (token) =>
+            nameTokens.includes(
+              token
+            )
+        ).length /
+        Math.max(
+          nameTokens.length,
+          queryTokens.length
+        )
+      : 0;
+
+  return Math.min(
+    1,
+    coverage * 0.8 +
+      nameCoverage * 0.2
+  );
+}
+
+function isLikelyBusiness(place) {
+  const hasBusinessName =
+    Boolean(
+      place.name &&
+      place.name.trim()
+    );
+
+  if (!hasBusinessName) {
+    return false;
+  }
+
+  const resultType =
+    (
+      place.result_type ||
+      ""
+    ).toLowerCase();
+
+  const categoryText =
+    Array.isArray(
+      place.categories
+    )
+      ? place.categories
+          .join(" ")
+          .toLowerCase()
+      : "";
+
+  const obviouslyGeographic =
+    [
+      "city",
+      "county",
+      "state",
+      "country",
+      "postcode",
+      "street",
+      "building",
+      "suburb",
+      "district",
+      "neighbourhood",
+      "neighborhood",
+    ].includes(
+      resultType
+    );
+
+  if (
+    obviouslyGeographic &&
+    !categoryText
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function normalizeSuggestion(
+  place,
+  query
+) {
+  const name =
+    place.name || "";
+
+  const nameSimilarity =
+    getNameSimilarity(
+      query,
+      name
+    );
+
+  const geoConfidence =
+    place.rank?.confidence ??
+    0;
+
+  const combinedScore =
+    nameSimilarity * 0.82 +
+    geoConfidence * 0.18;
+
   return {
     placeId:
       place.place_id || "",
 
-    name:
-      place.name ||
-      place.address_line1 ||
-      place.formatted ||
-      "",
+    name,
 
     address:
       place.formatted || "",
@@ -41,9 +265,19 @@ function normalizeSuggestion(
     longitude:
       place.lon ?? null,
 
+    resultType:
+      place.result_type || "",
+
+    categories:
+      place.categories || [],
+
     confidence:
-      place.rank?.confidence ??
-      null,
+      geoConfidence,
+
+    nameSimilarity,
+
+    matchScore:
+      combinedScore,
   };
 }
 
@@ -54,10 +288,7 @@ async function getPlaceDetails(
   const params =
     new URLSearchParams({
       id: placeId,
-
-      features:
-        "details",
-
+      features: "details",
       apiKey,
     });
 
@@ -81,8 +312,16 @@ async function getPlaceDetails(
     );
   }
 
-  const data =
-    JSON.parse(rawBody);
+  let data;
+
+  try {
+    data =
+      JSON.parse(rawBody);
+  } catch {
+    throw new Error(
+      "Geoapify returned invalid business details."
+    );
+  }
 
   const properties =
     data.features?.[0]
@@ -101,20 +340,16 @@ async function getPlaceDetails(
       "",
 
     city:
-      properties.city ||
-      "",
+      properties.city || "",
 
     state:
-      properties.state ||
-      "",
+      properties.state || "",
 
     postcode:
-      properties.postcode ||
-      "",
+      properties.postcode || "",
 
     country:
-      properties.country ||
-      "",
+      properties.country || "",
 
     countryCode:
       properties.country_code ||
@@ -143,45 +378,52 @@ async function getPlaceDetails(
       [],
 
     latitude:
-      properties.lat ??
-      null,
+      properties.lat ?? null,
 
     longitude:
-      properties.lon ??
-      null,
+      properties.lon ?? null,
   };
 }
 
-function looksLikeStrongMatch(
-  results
+function shouldAutoSelect(
+  suggestions
 ) {
   if (
-    results.length === 1
+    suggestions.length === 0
+  ) {
+    return false;
+  }
+
+  const first =
+    suggestions[0];
+
+  const second =
+    suggestions[1];
+
+  if (
+    first.nameSimilarity >=
+      0.96 &&
+    first.matchScore >=
+      0.78 &&
+    (
+      !second ||
+      first.matchScore -
+        second.matchScore >=
+        0.16
+    )
   ) {
     return true;
   }
 
-  const first =
-    results[0];
+  if (
+    suggestions.length === 1 &&
+    first.nameSimilarity >=
+      0.82
+  ) {
+    return true;
+  }
 
-  const second =
-    results[1];
-
-  const firstConfidence =
-    first.confidence ??
-    0;
-
-  const secondConfidence =
-    second?.confidence ??
-    0;
-
-  return (
-    firstConfidence >=
-      0.85 &&
-    firstConfidence -
-      secondConfidence >=
-      0.15
-  );
+  return false;
 }
 
 export async function handler(
@@ -208,13 +450,32 @@ export async function handler(
   }
 
   try {
-    const {
-      query,
-    } =
-      JSON.parse(
-        event.body ||
-          "{}"
-      );
+    let parsedBody;
+
+    try {
+      parsedBody =
+        JSON.parse(
+          event.body || "{}"
+        );
+    } catch {
+      return {
+        statusCode: 400,
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body:
+          JSON.stringify({
+            error:
+              "Invalid request.",
+          }),
+      };
+    }
+
+    const query =
+      parsedBody.query;
 
     if (
       !query ||
@@ -258,13 +519,25 @@ export async function handler(
           "json",
 
         limit:
-          "5",
+          "10",
 
         lang:
           "en",
 
-        // Restrict business
-        // searches to the US.
+        /*
+         * Important:
+         * search businesses /
+         * amenities instead of
+         * cities and streets.
+         */
+        type:
+          "amenity",
+
+        /*
+         * Mordecai currently
+         * supports US businesses
+         * only.
+         */
         filter:
           "countrycode:us",
 
@@ -302,26 +575,86 @@ export async function handler(
       };
     }
 
-    const data =
-      JSON.parse(
-        rawBody
-      );
+    let data;
+
+    try {
+      data =
+        JSON.parse(rawBody);
+    } catch {
+      return {
+        statusCode: 502,
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body:
+          JSON.stringify({
+            error:
+              "Business search returned an unexpected response.",
+          }),
+      };
+    }
 
     const suggestions =
       (data.results || [])
-        .map(
-          normalizeSuggestion
+        /*
+         * Remove obvious
+         * geography results.
+         */
+        .filter(
+          isLikelyBusiness
         )
+
+        /*
+         * Calculate how closely
+         * each returned name
+         * matches what the user
+         * actually typed.
+         */
+        .map(
+          (place) =>
+            normalizeSuggestion(
+              place,
+              query
+            )
+        )
+
+        /*
+         * Keep only useful
+         * US business matches.
+         */
         .filter(
           (place) =>
             place.placeId &&
-            place.name
+            place.name &&
+            place.countryCode ===
+              "us" &&
+            place.nameSimilarity >=
+              0.35
         )
+
+        /*
+         * Business-name relevance
+         * matters much more than
+         * Geoapify's generic
+         * geographic confidence.
+         */
+        .sort(
+          (a, b) =>
+            b.matchScore -
+            a.matchScore
+        )
+
         .slice(
           0,
           5
         );
 
+    /*
+     * Nothing useful found.
+     */
     if (
       suggestions.length ===
       0
@@ -340,12 +673,20 @@ export async function handler(
               "not_found",
 
             suggestions: [],
+
+            hint:
+              "Try adding the city or state, like “Green Tea Stony Brook NY.”",
           }),
       };
     }
 
+    /*
+     * Don't silently guess when
+     * several businesses could
+     * reasonably match.
+     */
     if (
-      !looksLikeStrongMatch(
+      !shouldAutoSelect(
         suggestions
       )
     ) {
@@ -365,20 +706,33 @@ export async function handler(
             suggestions:
               suggestions.slice(
                 0,
-                3
+                4
               ),
+
+            hint:
+              "Choose the right location, or add a city or state to narrow the search.",
           }),
       };
     }
 
+    /*
+     * Strong match:
+     * fetch the full business
+     * record so we can attempt
+     * to find its website.
+     */
     const business =
       await getPlaceDetails(
         suggestions[0]
           .placeId,
-
         apiKey
       );
 
+    /*
+     * Geoapify knows the business
+     * but doesn't have a website
+     * stored for it.
+     */
     if (
       !business.website
     ) {
@@ -400,6 +754,10 @@ export async function handler(
       };
     }
 
+    /*
+     * Best case:
+     * business + website found.
+     */
     return {
       statusCode: 200,
 

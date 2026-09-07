@@ -311,7 +311,7 @@ function BusinessCheck() {
           "not_found"
         ) {
           setError(
-            "We couldn't find that business. Try adding the city or state."
+            "Can\'t find it yet? Try adding the city or state, like “Green Tea Stony Brook NY.”"
           );
 
           return;
