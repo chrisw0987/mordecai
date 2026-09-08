@@ -10,6 +10,7 @@ import Footer from "./Components/Footer";
 
 import Home from "./Pages/Home";
 import BusinessCheck from "./Pages/BusinessCheck";
+import Work from "./Pages/Work";
 import Contact from "./Pages/Contact";
 
 import "./App.css";
@@ -30,6 +31,11 @@ function App() {
         <Route
           path="/business-check"
           element={<BusinessCheck />}
+        />
+
+        <Route
+          path="/work"
+          element={<Work />}
         />
 
         <Route

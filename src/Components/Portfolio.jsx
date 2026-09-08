@@ -1,11 +1,15 @@
 import React from "react";
 
 import {
+  ArrowRight,
   ArrowUpRight,
-  Globe2,
   MapPin,
   Smartphone,
 } from "lucide-react";
+
+import {
+  Link,
+} from "react-router-dom";
 
 const projects = [
   {
@@ -59,7 +63,6 @@ function Portfolio() {
       className="overflow-hidden bg-[#17151A] px-5 py-24 text-white lg:px-8 lg:py-32"
     >
       <div className="mx-auto max-w-7xl">
-        {/* Heading */}
         <div className="grid gap-8 lg:grid-cols-[1fr_0.65fr] lg:items-end">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#F4F0A3]">
@@ -76,12 +79,12 @@ function Portfolio() {
           </div>
 
           <p className="max-w-lg text-lg leading-8 text-white/55 lg:justify-self-end">
-            Websites and digital experiences built around the businesses,
-            customers, and problems they actually need to serve.
+            A few examples of websites and digital
+            experiences we&apos;ve built around real
+            businesses and real customer needs.
           </p>
         </div>
 
-        {/* Projects */}
         <div className="mt-16 space-y-6">
           {projects.map((project) => (
             <ProjectCard
@@ -89,6 +92,16 @@ function Portfolio() {
               project={project}
             />
           ))}
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link
+            to="/work"
+            className="inline-flex items-center gap-2 rounded-full bg-[#F4F0A3] px-7 py-4 font-semibold text-[#17151A] transition hover:-translate-y-0.5"
+          >
+            See All Our Work
+            <ArrowRight size={18} />
+          </Link>
         </div>
       </div>
     </section>
@@ -119,7 +132,8 @@ function ProjectCard({ project }) {
     },
   };
 
-  const theme = themeClasses[project.theme];
+  const theme =
+    themeClasses[project.theme];
 
   return (
     <article
@@ -133,7 +147,6 @@ function ProjectCard({ project }) {
       `}
     >
       <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
-        {/* Project info */}
         <div className="flex flex-col p-6 sm:p-8 lg:p-10">
           <div className="flex items-start justify-between gap-6">
             <div>
@@ -188,7 +201,6 @@ function ProjectCard({ project }) {
             `}
           >
             <MapPin size={15} />
-
             {project.location}
           </div>
 
@@ -208,40 +220,40 @@ function ProjectCard({ project }) {
           </p>
 
           <div className="mt-8 flex flex-wrap gap-2">
-            {project.services.map((service) => (
-              <span
-                key={service}
-                className={`
-                  rounded-full
-                  border
-                  px-3 py-1.5
-                  text-xs
-                  font-semibold
+            {project.services.map(
+              (service) => (
+                <span
+                  key={service}
+                  className={`
+                    rounded-full
+                    border
+                    px-3
+                    py-1.5
+                    text-xs
+                    font-semibold
 
-                  ${
-                    project.theme === "cream"
-                      ? "border-black/10 bg-white/50 text-black/55"
-                      : "border-white/10 bg-white/[0.06] text-white/60"
-                  }
-                `}
-              >
-                {service}
-              </span>
-            ))}
+                    ${
+                      project.theme === "cream"
+                        ? "border-black/10 bg-white/50 text-black/55"
+                        : "border-white/10 bg-white/[0.06] text-white/60"
+                    }
+                  `}
+                >
+                  {service}
+                </span>
+              )
+            )}
           </div>
 
           <div className="mt-auto pt-10">
-            <button
-              type="button"
+            <Link
+              to="/work"
               className={`
                 inline-flex
                 items-center
                 gap-2
-                bg-transparent
-                p-0
                 text-sm
                 font-semibold
-                shadow-none
                 transition-all
 
                 ${
@@ -251,13 +263,12 @@ function ProjectCard({ project }) {
                 }
               `}
             >
-              View project
+              View case study
               <ArrowUpRight size={16} />
-            </button>
+            </Link>
           </div>
         </div>
 
-        {/* Visual mockup */}
         <div className="relative min-h-[420px] overflow-hidden p-5 sm:p-8">
           <div
             className={`
@@ -269,7 +280,6 @@ function ProjectCard({ project }) {
               sm:inset-8
             `}
           >
-            {/* Fake browser */}
             <div className="flex h-11 items-center gap-2 border-b border-white/10 px-4">
               <span className="h-2.5 w-2.5 rounded-full bg-white/30" />
               <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
@@ -290,7 +300,12 @@ function ProjectCard({ project }) {
                 `}
               />
 
-              <div className={`relative ${theme.previewText}`}>
+              <div
+                className={`
+                  relative
+                  ${theme.previewText}
+                `}
+              >
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-bold">
                     {project.name}
@@ -309,7 +324,8 @@ function ProjectCard({ project }) {
                   </p>
 
                   <p className="mt-4 text-4xl font-bold leading-[1.02] tracking-[-0.05em] sm:text-5xl">
-                    Built to make a stronger first impression.
+                    Built to make a stronger first
+                    impression.
                   </p>
 
                   <div
@@ -323,7 +339,6 @@ function ProjectCard({ project }) {
                       py-3
                       text-sm
                       font-semibold
-
                       ${theme.accent}
 
                       ${
@@ -339,7 +354,6 @@ function ProjectCard({ project }) {
                 </div>
               </div>
 
-              {/* Mobile preview */}
               <div className="absolute bottom-[-55px] right-6 hidden w-[135px] rounded-[1.6rem] border-[5px] border-[#17151A] bg-white p-2 shadow-2xl sm:block">
                 <div className="h-[225px] overflow-hidden rounded-[1.1rem] bg-[#F7F5EF]">
                   <div className="flex justify-center pt-3">
@@ -351,10 +365,8 @@ function ProjectCard({ project }) {
 
                   <div className="px-3 pt-5">
                     <div className="h-2 w-12 rounded-full bg-black/15" />
-
                     <div className="mt-3 h-3 w-full rounded-full bg-black/75" />
                     <div className="mt-1 h-3 w-4/5 rounded-full bg-black/75" />
-
                     <div className="mt-5 h-20 rounded-xl bg-[#7547B8]/15" />
 
                     <div className="mt-4 flex gap-1">

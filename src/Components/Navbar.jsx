@@ -38,55 +38,17 @@ function Navbar() {
 
     if (location.pathname !== "/") {
       navigate("/");
-
       setTimeout(scroll, 120);
-
       return;
     }
 
     scroll();
   };
 
-  const navItems = [
-    {
-      label: "Services",
-      id: "services",
-    },
-    {
-      label: "Our Work",
-      id: "work",
-    },
-    {
-      label: "Why Us",
-      id: "why-us",
-    },
-  ];
-
   return (
     <>
-      <header
-        className="
-          sticky
-          top-0
-          z-50
-          border-b
-          border-black/10
-          bg-[#F7F5EF]/90
-          backdrop-blur-xl
-        "
-      >
-        <div
-          className="
-            mx-auto
-            flex
-            max-w-7xl
-            items-center
-            justify-between
-            px-5
-            py-4
-            lg:px-8
-          "
-        >
+      <header className="sticky top-0 z-50 border-b border-black/10 bg-[#F7F5EF]/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
           <Link
             to="/"
             className="flex items-center"
@@ -98,98 +60,63 @@ function Navbar() {
             />
           </Link>
 
-          {/* Desktop navigation */}
-          <nav
-            className="
-              hidden
-              items-center
-              gap-9
-              md:flex
-            "
-          >
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() =>
-                  scrollToSection(item.id)
-                }
-                className="
-                  bg-transparent
-                  p-0
-                  text-sm
-                  font-semibold
-                  text-[#17151A]
-                  shadow-none
-                  transition-colors
-                  hover:text-[#7547B8]
-                "
-              >
-                {item.label}
-              </button>
-            ))}
+          <nav className="hidden items-center gap-9 md:flex">
+            <button
+              type="button"
+              onClick={() =>
+                scrollToSection("services")
+              }
+              className="bg-transparent p-0 text-sm font-semibold text-[#17151A] shadow-none transition-colors hover:text-[#7547B8]"
+            >
+              Services
+            </button>
+
+            <Link
+              to="/work"
+              className="text-sm font-semibold text-[#17151A] transition-colors hover:text-[#7547B8]"
+            >
+              Our Work
+            </Link>
+
+            <button
+              type="button"
+              onClick={() =>
+                scrollToSection("why-us")
+              }
+              className="bg-transparent p-0 text-sm font-semibold text-[#17151A] shadow-none transition-colors hover:text-[#7547B8]"
+            >
+              Why Us
+            </button>
 
             <Link
               to="/contact"
-              className="
-                text-sm
-                font-semibold
-                text-[#17151A]
-                transition-colors
-                hover:text-[#7547B8]
-              "
+              className="text-sm font-semibold text-[#17151A] transition-colors hover:text-[#7547B8]"
             >
               Contact
             </Link>
           </nav>
 
-          {/* Desktop CTA */}
           <Link
             to="/business-check"
-            className="
-              hidden
-              items-center
-              gap-2
-              rounded-full
-              bg-[#7547B8]
-              px-5
-              py-3
-              text-sm
-              font-semibold
-              text-white
-              transition-all
-              duration-200
-              hover:-translate-y-0.5
-              hover:bg-[#6439A5]
-              md:inline-flex
-            "
+            className="hidden items-center gap-2 rounded-full bg-[#7547B8] px-5 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#6439A5] md:inline-flex"
           >
             Check My Business
             <ArrowUpRight size={17} />
           </Link>
 
-          {/* Mobile menu button */}
           <button
             type="button"
             onClick={() =>
               setIsMenuOpen(true)
             }
             aria-label="Open navigation"
-            className="
-              rounded-full
-              bg-transparent
-              p-2
-              text-[#17151A]
-              shadow-none
-              md:hidden
-            "
+            className="rounded-full bg-transparent p-2 text-[#17151A] shadow-none md:hidden"
           >
             <Menu size={26} />
           </button>
         </div>
       </header>
 
-      {/* Mobile overlay */}
       <div
         onClick={() =>
           setIsMenuOpen(false)
@@ -211,7 +138,6 @@ function Navbar() {
         `}
       />
 
-      {/* Mobile drawer */}
       <aside
         className={`
           fixed
@@ -237,13 +163,7 @@ function Navbar() {
           }
         `}
       >
-        <div
-          className="
-            flex
-            items-center
-            justify-between
-          "
-        >
+        <div className="flex items-center justify-between">
           <Link
             to="/"
             onClick={() =>
@@ -262,60 +182,50 @@ function Navbar() {
             onClick={() =>
               setIsMenuOpen(false)
             }
-            className="
-              rounded-full
-              bg-transparent
-              p-2
-              text-[#17151A]
-              shadow-none
-            "
+            className="rounded-full bg-transparent p-2 text-[#17151A] shadow-none"
             aria-label="Close navigation"
           >
             <X size={26} />
           </button>
         </div>
 
-        <nav
-          className="
-            mt-14
-            flex
-            flex-col
-            gap-8
-          "
-        >
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() =>
-                scrollToSection(item.id)
-              }
-              className="
-                bg-transparent
-                p-0
-                text-left
-                text-3xl
-                font-semibold
-                tracking-tight
-                text-[#17151A]
-                shadow-none
-              "
-            >
-              {item.label}
-            </button>
-          ))}
+        <nav className="mt-14 flex flex-col gap-8">
+          <button
+            type="button"
+            onClick={() =>
+              scrollToSection("services")
+            }
+            className="bg-transparent p-0 text-left text-3xl font-semibold tracking-tight text-[#17151A] shadow-none"
+          >
+            Services
+          </button>
+
+          <Link
+            to="/work"
+            onClick={() =>
+              setIsMenuOpen(false)
+            }
+            className="text-3xl font-semibold tracking-tight text-[#17151A]"
+          >
+            Our Work
+          </Link>
+
+          <button
+            type="button"
+            onClick={() =>
+              scrollToSection("why-us")
+            }
+            className="bg-transparent p-0 text-left text-3xl font-semibold tracking-tight text-[#17151A] shadow-none"
+          >
+            Why Us
+          </button>
 
           <Link
             to="/contact"
             onClick={() =>
               setIsMenuOpen(false)
             }
-            className="
-              text-3xl
-              font-semibold
-              tracking-tight
-              text-[#17151A]
-            "
+            className="text-3xl font-semibold tracking-tight text-[#17151A]"
           >
             Contact
           </Link>
@@ -326,19 +236,7 @@ function Navbar() {
           onClick={() =>
             setIsMenuOpen(false)
           }
-          className="
-            mt-auto
-            inline-flex
-            items-center
-            justify-center
-            gap-2
-            rounded-full
-            bg-[#7547B8]
-            px-6
-            py-4
-            font-semibold
-            text-white
-          "
+          className="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-[#7547B8] px-6 py-4 font-semibold text-white"
         >
           Check My Business
           <ArrowUpRight size={18} />
