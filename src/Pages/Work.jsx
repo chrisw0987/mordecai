@@ -3,11 +3,16 @@ import {
   ArrowUpRight,
   ExternalLink,
   MapPin,
+  Radio,
+  ScanLine,
+  Smartphone,
 } from "lucide-react";
 
 import {
   Link,
 } from "react-router-dom";
+
+import reviewCardClient from "../assets/client_3.jpeg";
 
 const projects = [
   {
@@ -75,6 +80,8 @@ const projects = [
 function Work() {
   return (
     <main className="min-h-screen bg-[#17151A] text-white">
+
+      {/* HERO */}
       <section className="border-b border-white/10 px-5 pb-14 pt-16 lg:px-8 lg:pb-20 lg:pt-24">
         <div className="mx-auto max-w-7xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#F4F0A3]">
@@ -90,26 +97,185 @@ function Work() {
             </h1>
 
             <p className="max-w-lg text-lg leading-8 text-white/55 lg:justify-self-end">
-              Websites and digital experiences built
-              around real businesses, real customers,
-              and the problems they actually need to
-              solve.
+              Websites, review tools, and digital
+              experiences built around real businesses,
+              real customers, and the problems they
+              actually need to solve.
             </p>
           </div>
         </div>
       </section>
 
+      {/* DIGITAL PROJECTS */}
       <section className="px-5 py-14 lg:px-8 lg:py-20">
-        <div className="mx-auto max-w-7xl space-y-8">
-          {projects.map((project) => (
-            <ProjectCard
-              key={project.name}
-              project={project}
-            />
-          ))}
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 flex items-end justify-between gap-8">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#F4F0A3]">
+                Websites & Digital Products
+              </p>
+
+              <h2 className="mt-3 text-3xl font-bold tracking-[-0.04em] sm:text-4xl">
+                Built for real businesses.
+              </h2>
+            </div>
+          </div>
+
+          <div className="space-y-8">
+            {projects.map((project) => (
+              <ProjectCard
+                key={project.name}
+                project={project}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
+      {/* REVIEW CARD PROJECT */}
+      <section className="border-t border-white/10 px-5 py-16 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-7xl">
+
+          {/* Section intro */}
+          <div className="mb-10 grid gap-5 lg:grid-cols-[1fr_0.7fr] lg:items-end">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#F4F0A3]">
+                Beyond the Website
+              </p>
+
+              <h2 className="mt-4 max-w-3xl text-4xl font-bold tracking-[-0.045em] sm:text-5xl">
+                Helping businesses connect{" "}
+                <span className="text-white/35">
+                  online and in person.
+                </span>
+              </h2>
+            </div>
+
+            <p className="max-w-lg text-base leading-7 text-white/45 lg:justify-self-end">
+              Sometimes improving a business&apos;s
+              online presence starts with something
+              sitting right on the counter.
+            </p>
+          </div>
+
+          {/* Review Card Case Study */}
+          <article className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045]">
+            <div className="grid lg:grid-cols-[0.78fr_1.22fr]">
+
+              {/* Copy */}
+              <div className="flex flex-col p-7 sm:p-9 lg:p-10">
+                <div className="flex items-start justify-between gap-6">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#F4F0A3]">
+                      Review & Local Presence
+                    </p>
+
+                    <h3 className="mt-4 text-3xl font-bold tracking-[-0.04em] sm:text-4xl">
+                      NFC Review Cards
+                    </h3>
+                  </div>
+
+                  <span className="text-xs font-semibold text-white/30">
+                    05
+                  </span>
+                </div>
+
+                <div className="mt-4 flex items-center gap-2 text-sm text-white/45">
+                  <MapPin size={15} />
+                  Local Business
+                </div>
+
+                <p className="mt-8 max-w-xl text-base leading-7 text-white/55">
+                  A simple tap-and-scan review card
+                  placed directly at the client&apos;s
+                  checkout area, giving customers an
+                  easier way to reach the business&apos;s
+                  Google review page.
+                </p>
+
+                {/* How it works */}
+                <div className="mt-8 space-y-3">
+                  <div className="flex items-center gap-3 text-sm text-white/65">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#7547B8]/20 text-[#F4F0A3]">
+                      <Smartphone size={15} />
+                    </div>
+
+                    Tap with a compatible phone
+                  </div>
+
+                  <div className="flex items-center gap-3 text-sm text-white/65">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#7547B8]/20 text-[#F4F0A3]">
+                      <ScanLine size={15} />
+                    </div>
+
+                    Or scan the QR code
+                  </div>
+
+                  <div className="flex items-center gap-3 text-sm text-white/65">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#7547B8]/20 text-[#F4F0A3]">
+                      <Radio size={15} />
+                    </div>
+
+                    Open the business&apos;s review page
+                  </div>
+                </div>
+
+                {/* Tags */}
+                <div className="mt-8 flex flex-wrap gap-2">
+                  {[
+                    "NFC Review Card",
+                    "Google Reviews",
+                    "QR Code",
+                    "Local Presence",
+                  ].map((service) => (
+                    <span
+                      key={service}
+                      className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-white/65"
+                    >
+                      {service}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-auto pt-10">
+                  <Link
+                    to="/contact"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-[#F4F0A3]"
+                  >
+                    Ask about review cards
+                    <ArrowUpRight size={16} />
+                  </Link>
+                </div>
+              </div>
+
+              {/* Client photo */}
+              <div className="p-5 sm:p-7 lg:p-8">
+                <div className="relative overflow-hidden rounded-[1.6rem] border border-white/10 bg-white shadow-2xl">
+                  <img
+                    src={reviewCardClient}
+                    alt="NFC review card installed at a local business"
+                    className="h-[420px] w-full object-cover sm:h-[500px] lg:h-[560px]"
+                  />
+
+                  {/* Photo overlay */}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-5 pt-24">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-3.5 py-2 text-xs font-bold text-[#17151A] shadow-lg backdrop-blur">
+                      <span className="h-2 w-2 rounded-full bg-[#7547B8]" />
+                      In use at a local business
+                    </div>
+                  </div>
+                </div>
+
+                <p className="mt-3 text-right text-xs text-white/30">
+                  Real client installation
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
       <section className="px-5 pb-16 lg:px-8 lg:pb-24">
         <div className="mx-auto max-w-7xl rounded-[2rem] bg-[#F4F0A3] p-8 text-[#17151A] sm:p-10 lg:flex lg:items-center lg:justify-between lg:gap-10 lg:p-12">
           <div>
@@ -151,6 +317,8 @@ function ProjectCard({
   return (
     <article className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045]">
       <div className="grid lg:grid-cols-[0.78fr_1.22fr]">
+
+        {/* Project copy */}
         <div className="flex flex-col p-7 sm:p-9 lg:p-10">
           <div className="flex items-start justify-between gap-6">
             <div>
@@ -203,6 +371,7 @@ function ProjectCard({
           </div>
         </div>
 
+        {/* Website preview */}
         <div className="p-5 sm:p-7 lg:p-8">
           <div className="overflow-hidden rounded-[1.6rem] border border-white/10 bg-[#F7F5EF] shadow-2xl">
             <div className="flex h-11 items-center gap-2 border-b border-black/10 bg-[#EFEDE7] px-4">

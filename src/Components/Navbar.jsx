@@ -60,7 +60,8 @@ function Navbar() {
             />
           </Link>
 
-          <nav className="hidden items-center gap-9 md:flex">
+          {/* Desktop Navigation */}
+          <nav className="hidden items-center gap-8 md:flex">
             <button
               type="button"
               onClick={() =>
@@ -76,6 +77,13 @@ function Navbar() {
               className="text-sm font-semibold text-[#17151A] transition-colors hover:text-[#7547B8]"
             >
               Our Work
+            </Link>
+
+            <Link
+              to="/pricing"
+              className="text-sm font-semibold text-[#17151A] transition-colors hover:text-[#7547B8]"
+            >
+              Pricing
             </Link>
 
             <button
@@ -104,6 +112,7 @@ function Navbar() {
             <ArrowUpRight size={17} />
           </Link>
 
+          {/* Mobile Menu Button */}
           <button
             type="button"
             onClick={() =>
@@ -117,6 +126,7 @@ function Navbar() {
         </div>
       </header>
 
+      {/* Mobile Overlay */}
       <div
         onClick={() =>
           setIsMenuOpen(false)
@@ -138,6 +148,7 @@ function Navbar() {
         `}
       />
 
+      {/* Mobile Menu */}
       <aside
         className={`
           fixed
@@ -189,7 +200,7 @@ function Navbar() {
           </button>
         </div>
 
-        <nav className="mt-14 flex flex-col gap-8">
+        <nav className="mt-14 flex flex-col gap-7">
           <button
             type="button"
             onClick={() =>
@@ -208,6 +219,16 @@ function Navbar() {
             className="text-3xl font-semibold tracking-tight text-[#17151A]"
           >
             Our Work
+          </Link>
+
+          <Link
+            to="/pricing"
+            onClick={() =>
+              setIsMenuOpen(false)
+            }
+            className="text-3xl font-semibold tracking-tight text-[#7547B8]"
+          >
+            Pricing
           </Link>
 
           <button

@@ -11,7 +11,10 @@ import Footer from "./Components/Footer";
 import Home from "./Pages/Home";
 import BusinessCheck from "./Pages/BusinessCheck";
 import Work from "./Pages/Work";
+import Pricing from "./Pages/Pricing";
 import Contact from "./Pages/Contact";
+import Terms from "./Pages/Terms";
+import Privacy from "./Pages/Privacy";
 
 import "./App.css";
 
@@ -39,8 +42,23 @@ function App() {
         />
 
         <Route
+          path="/pricing"
+          element={<Pricing />}
+        />
+
+        <Route
           path="/contact"
           element={<Contact />}
+        />
+
+        <Route
+          path="/terms"
+          element={<Terms />}
+        />
+
+        <Route 
+          path="/privacy" 
+          element={<Privacy />} 
         />
 
         <Route

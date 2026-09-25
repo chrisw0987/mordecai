@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+
 import {
   ArrowUpRight,
   Mail,
@@ -36,8 +38,8 @@ function Footer() {
         >
           {/* Brand */}
           <div>
-            <a
-              href="/"
+            <Link
+              to="/"
               className="
                 text-3xl
                 font-bold
@@ -46,7 +48,7 @@ function Footer() {
               "
             >
               Mordecai
-            </a>
+            </Link>
 
             <h2
               className="
@@ -89,8 +91,8 @@ function Footer() {
                 gap-y-4
               "
             >
-              <a
-                href="/business-check"
+              <Link
+                to="/business-check"
                 className="
                   inline-flex
                   items-center
@@ -103,10 +105,10 @@ function Footer() {
               >
                 Check My Business
                 <ArrowUpRight size={17} />
-              </a>
+              </Link>
 
-              <a
-                href="/contact"
+              <Link
+                to="/contact"
                 className="
                   inline-flex
                   items-center
@@ -119,11 +121,11 @@ function Footer() {
               >
                 Contact Us
                 <ArrowUpRight size={17} />
-              </a>
+              </Link>
             </div>
           </div>
 
-          {/* Links */}
+          {/* Footer Links */}
           <div
             className="
               grid
@@ -133,6 +135,7 @@ function Footer() {
               lg:gap-20
             "
           >
+            {/* Explore */}
             <div>
               <p
                 className="
@@ -165,8 +168,8 @@ function Footer() {
                   Services
                 </a>
 
-                <a
-                  href="/#work"
+                <Link
+                  to="/work"
                   className="
                     text-white/65
                     transition
@@ -174,7 +177,18 @@ function Footer() {
                   "
                 >
                   Our Work
-                </a>
+                </Link>
+
+                <Link
+                  to="/pricing"
+                  className="
+                    text-white/65
+                    transition
+                    hover:text-white
+                  "
+                >
+                  Pricing
+                </Link>
 
                 <a
                   href="/#why-us"
@@ -187,8 +201,8 @@ function Footer() {
                   Why Us
                 </a>
 
-                <a
-                  href="/business-check"
+                <Link
+                  to="/business-check"
                   className="
                     text-white/65
                     transition
@@ -196,10 +210,10 @@ function Footer() {
                   "
                 >
                   Free Online Business Check
-                </a>
+                </Link>
 
-                <a
-                  href="/contact"
+                <Link
+                  to="/contact"
                   className="
                     text-white/65
                     transition
@@ -207,10 +221,11 @@ function Footer() {
                   "
                 >
                   Contact Us
-                </a>
+                </Link>
               </div>
             </div>
 
+            {/* Contact + Legal */}
             <div>
               <p
                 className="
@@ -264,6 +279,45 @@ function Footer() {
                   347-925-6580
                 </a>
               </div>
+
+              {/* Legal */}
+              <div className="mt-9">
+                <p
+                  className="
+                    text-xs
+                    font-bold
+                    uppercase
+                    tracking-[0.18em]
+                    text-white/30
+                  "
+                >
+                  Legal
+                </p>
+
+                <div className="mt-5 flex flex-col gap-4">
+                  <Link
+                    to="/terms"
+                    className="
+                      text-white/65
+                      transition
+                      hover:text-white
+                    "
+                  >
+                    Website Service Terms
+                  </Link>
+
+                  <Link
+                    to="/privacy"
+                    className="
+                      text-white/65
+                      transition
+                      hover:text-white
+                    "
+                  >
+                    Privacy Policy
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -286,6 +340,28 @@ function Footer() {
             © {currentYear} Mordecai. All
             rights reserved.
           </p>
+
+          <div className="flex items-center gap-5">
+            <Link
+              to="/privacy"
+              className="
+                transition
+                hover:text-white/70
+              "
+            >
+              Privacy
+            </Link>
+
+            <Link
+              to="/terms"
+              className="
+                transition
+                hover:text-white/70
+              "
+            >
+              Terms
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
