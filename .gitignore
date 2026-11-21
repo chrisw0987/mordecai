@@ -25,3 +25,9 @@ dist-ssr
 
 # Local Netlify folder
 .netlify
+
+.env
+.env.*
+mordecai-dashboard.zip
+mordecai-dashboard/
+.git-backup/

@@ -1,16 +1,62 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ivory: #f4efe3;
+  --color-bone: #faf6ec;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  background: #f7f5ef;
+  background: var(--color-ivory);
   color: #17151a;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 * {
   box-sizing: border-box;
+}
+.dark-pattern {
+  background-color: #17151a;
+  background-image: url("./assets/black_background_pattern.webp");
+  background-repeat: repeat;
+  background-size: 360px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal-state="waiting"]:not(:focus-within) {
+    opacity: 0;
+  }
+
+  [data-reveal-state="visible"] {
+    animation: page-fade-in 420ms ease-out;
+  }
+
+  .dashboard-reveal [data-reveal-state="visible"] {
+    animation: hero-slide-in 550ms ease-out both;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+
+  .page-hero-content[data-reveal-state="visible"],
+  [data-scroll-reveal="slide"][data-reveal-state="visible"] {
+    animation: hero-slide-in 550ms ease-out;
+  }
+}
+
+
+@keyframes page-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes hero-slide-in {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+section[id] {
+  scroll-margin-top: 5rem;
 }

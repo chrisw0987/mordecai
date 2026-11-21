@@ -98,8 +98,8 @@ function Contact() {
 
   if (submitted) {
     return (
-      <main className="flex min-h-[75vh] items-center justify-center bg-[#F7F5EF] px-5 py-20">
-        <div className="max-w-xl text-center">
+      <main className="flex items-center justify-center bg-ivory px-5 py-8">
+        <div className="page-hero-content max-w-xl text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#AFCB83]">
             <Check
               size={28}
@@ -137,16 +137,12 @@ function Contact() {
   }
 
   return (
-    <main className="bg-[#F7F5EF] px-5 py-20 lg:px-8 lg:py-28">
+    <main className="bg-ivory px-5 py-7 lg:px-8 lg:py-9">
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-12 lg:grid-cols-[0.72fr_1fr] lg:gap-20">
+        <div className="page-hero-content grid gap-6 lg:grid-cols-[0.72fr_1fr] lg:gap-10">
 
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#7547B8]">
-              Contact Mordecai
-            </p>
-
-            <h1 className="mt-5 text-5xl font-bold leading-[0.97] tracking-[-0.055em] text-[#17151A] sm:text-6xl">
+            <h1 className="text-5xl font-bold leading-[0.97] tracking-[-0.055em] text-[#17151A] sm:text-6xl">
               Let's talk about
               <span className="text-[#7547B8]">
                 {" "}
@@ -154,7 +150,7 @@ function Contact() {
               </span>
             </h1>
 
-            <p className="mt-7 max-w-xl text-lg leading-8 text-[#17151A]/60">
+            <p className="mt-4 max-w-xl text-lg leading-8 text-[#17151A]/60">
               Need a website?
               Want to improve how
               customers find you?
@@ -164,7 +160,7 @@ function Contact() {
               right direction.
             </p>
 
-            <div className="mt-10 space-y-5">
+            <div className="mt-5 space-y-3">
               <a
                 href="mailto:mordecaiteam@gmail.com"
                 className="flex items-center gap-4 text-[#17151A]/65"
@@ -189,7 +185,7 @@ function Contact() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-black/[0.07] bg-white p-6 sm:p-9 lg:p-10">
+          <div className="rounded-[2rem] border border-black/[0.07] bg-bone p-5 sm:p-7">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#7547B8]/10 text-[#7547B8]">
               <MessageSquareText
                 size={22}
@@ -268,7 +264,7 @@ function Contact() {
                   onChange={
                     handleChange
                   }
-                  className="w-full rounded-2xl border border-black/10 bg-[#F7F5EF] px-4 py-3.5 outline-none focus:border-[#7547B8]"
+                  className="w-full rounded-2xl border border-black/10 bg-ivory px-4 py-3.5 outline-none focus:border-[#7547B8]"
                 >
                   <option value="">
                     Select one
@@ -308,7 +304,7 @@ function Contact() {
                     handleChange
                   }
                   placeholder="Tell us a little about what you'd like to improve."
-                  className="w-full resize-none rounded-2xl border border-black/10 bg-[#F7F5EF] px-4 py-3.5 outline-none focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
+                  className="w-full resize-none rounded-2xl border border-black/10 bg-ivory px-4 py-3.5 outline-none focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
                 />
               </div>
 
@@ -365,7 +361,7 @@ function Field({
         value={value}
         onChange={onChange}
         required={required}
-        className="w-full rounded-2xl border border-black/10 bg-[#F7F5EF] px-4 py-3.5 outline-none focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
+        className="w-full rounded-2xl border border-black/10 bg-ivory px-4 py-3.5 outline-none focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
       />
     </div>
   );

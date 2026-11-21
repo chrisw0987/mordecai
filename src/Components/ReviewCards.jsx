@@ -15,7 +15,6 @@ import {
 
 import googleCards from "../assets/google-review-cards.png";
 import socialCards from "../assets/social-review-cards.png";
-import clientPhoto from "../assets/client_3.jpeg";
 
 function ReviewCards() {
   const stageRef = useRef(null);
@@ -64,12 +63,12 @@ function ReviewCards() {
       id="review-cards"
       className="
         overflow-hidden
-        bg-[#F7F5EF]
+        bg-ivory
         px-5
-        py-24
+        py-16
         text-[#17151A]
         lg:px-8
-        lg:py-32
+        lg:py-20
       "
     >
       <div className="mx-auto max-w-7xl">
@@ -136,12 +135,12 @@ function ReviewCards() {
         {/* Product Showcase */}
         <div
           className="
-            mt-16
+            mt-12
             grid
             items-center
-            gap-14
+            gap-10
             lg:grid-cols-[1.15fr_0.85fr]
-            lg:gap-20
+            lg:gap-14
           "
         >
           {/* 3D Stage */}
@@ -303,7 +302,7 @@ function ReviewCards() {
                   rounded-full
                   border
                   border-black/5
-                  bg-white
+                  bg-bone
                   px-4
                   py-2.5
                   text-xs

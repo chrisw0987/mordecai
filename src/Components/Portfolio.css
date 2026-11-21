@@ -1,0 +1,63 @@
+.portfolio-conveyor {
+  container-type: inline-size;
+  overflow: hidden;
+}
+
+.portfolio-track,
+.portfolio-group {
+  display: flex;
+  width: max-content;
+}
+
+.portfolio-track {
+  animation: portfolio-scroll 44s linear infinite;
+}
+
+.portfolio-track[data-direction="right"] {
+  animation-direction: reverse;
+}
+
+.portfolio-group {
+  gap: 0.75rem;
+  padding-inline-end: 0.75rem;
+}
+
+.portfolio-card {
+  width: max(clamp(14rem, 46vw, 22rem), calc(100cqw / 3 - 0.75rem));
+}
+
+@keyframes portfolio-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-conveyor {
+    overflow-x: auto;
+  }
+
+  .portfolio-track {
+    animation: none;
+  }
+
+  .portfolio-group[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+.portfolio-dialog::backdrop {
+  background: rgb(0 0 0 / 78%);
+}
+
+.portfolio-conveyor:has(:focus-visible) {
+  overflow-x: auto;
+}
+
+.portfolio-conveyor:has(:focus-visible) .portfolio-track {
+  animation: none;
+}
+
+.portfolio-conveyor:has(:focus-visible) [aria-hidden="true"].portfolio-group {
+  display: none;
+}

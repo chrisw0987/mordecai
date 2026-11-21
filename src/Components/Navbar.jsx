@@ -47,7 +47,7 @@ function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-black/10 bg-[#F7F5EF]/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-black/10 bg-ivory/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
           <Link
             to="/"
@@ -119,6 +119,8 @@ function Navbar() {
               setIsMenuOpen(true)
             }
             aria-label="Open navigation"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
             className="rounded-full bg-transparent p-2 text-[#17151A] shadow-none md:hidden"
           >
             <Menu size={26} />
@@ -126,51 +128,26 @@ function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Overlay */}
-      <div
-        onClick={() =>
-          setIsMenuOpen(false)
-        }
+      {/* Mobile Menu */}
+      <aside id="mobile-navigation"
         className={`
           fixed
           inset-0
-          z-[60]
-          bg-black/40
-          transition-opacity
-          duration-300
-          md:hidden
-
-          ${
-            isMenuOpen
-              ? "pointer-events-auto opacity-100"
-              : "pointer-events-none opacity-0"
-          }
-        `}
-      />
-
-      {/* Mobile Menu */}
-      <aside
-        className={`
-          fixed
-          right-0
-          top-0
+          h-dvh
           z-[70]
           flex
-          h-screen
-          w-[88%]
-          max-w-sm
-          flex-col
-          bg-[#F7F5EF]
+          w-full
+          flex-col overflow-y-auto overscroll-contain
+          bg-ivory
           p-6
-          shadow-2xl
           transition-transform
           duration-300
           md:hidden
 
           ${
             isMenuOpen
-              ? "translate-x-0"
-              : "translate-x-full"
+              ? "visible translate-x-0"
+              : "invisible translate-x-full"
           }
         `}
       >
@@ -200,13 +177,13 @@ function Navbar() {
           </button>
         </div>
 
-        <nav className="mt-14 flex flex-col gap-7">
+        <nav className="mt-10 flex flex-col gap-7">
           <button
             type="button"
             onClick={() =>
               scrollToSection("services")
             }
-            className="bg-transparent p-0 text-left text-3xl font-semibold tracking-tight text-[#17151A] shadow-none"
+            className="bg-transparent p-0 text-left text-xl font-semibold tracking-tight text-[#17151A] shadow-none"
           >
             Services
           </button>
@@ -216,7 +193,7 @@ function Navbar() {
             onClick={() =>
               setIsMenuOpen(false)
             }
-            className="text-3xl font-semibold tracking-tight text-[#17151A]"
+            className="text-xl font-semibold tracking-tight text-[#17151A]"
           >
             Our Work
           </Link>
@@ -226,7 +203,7 @@ function Navbar() {
             onClick={() =>
               setIsMenuOpen(false)
             }
-            className="text-3xl font-semibold tracking-tight text-[#7547B8]"
+            className="text-xl font-semibold tracking-tight text-[#17151A]"
           >
             Pricing
           </Link>
@@ -236,7 +213,7 @@ function Navbar() {
             onClick={() =>
               scrollToSection("why-us")
             }
-            className="bg-transparent p-0 text-left text-3xl font-semibold tracking-tight text-[#17151A] shadow-none"
+            className="bg-transparent p-0 text-left text-xl font-semibold tracking-tight text-[#17151A] shadow-none"
           >
             Why Us
           </button>
@@ -246,7 +223,7 @@ function Navbar() {
             onClick={() =>
               setIsMenuOpen(false)
             }
-            className="text-3xl font-semibold tracking-tight text-[#17151A]"
+            className="text-xl font-semibold tracking-tight text-[#17151A]"
           >
             Contact
           </Link>
@@ -257,7 +234,7 @@ function Navbar() {
           onClick={() =>
             setIsMenuOpen(false)
           }
-          className="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-[#7547B8] px-6 py-4 font-semibold text-white"
+          className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#7547B8] px-6 py-4 font-semibold text-white"
         >
           Check My Business
           <ArrowUpRight size={18} />

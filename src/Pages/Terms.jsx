@@ -91,7 +91,7 @@ const sections = [
 
         <p>
           Additional Website Work is currently billed at
-          $50 per hour unless a different price is
+          $40 per hour unless a different price is
           approved in writing before the work begins.
           Mordecai will obtain the Client's approval
           before performing chargeable additional work.
@@ -166,12 +166,12 @@ const sections = [
           Mordecai may purchase, configure, or manage a
           Client-specific domain and hosting services on
           the Client's behalf when those services are
-          included in the project or Website Care.
+          included in the project or a monthly plan.
         </p>
 
         <p>
           Standard domain renewal of up to $30 per year
-          is included while eligible Website Care
+          is included while an eligible monthly plan
           remains active. Premium domains, unusually
           expensive renewals, specialty domains, or
           additional domain purchases are not included
@@ -179,7 +179,7 @@ const sections = [
         </p>
 
         <p>
-          If Website Care ends, future domain and
+          If a monthly plan ends, future domain and
           hosting expenses become the Client's
           responsibility. Mordecai will reasonably
           assist with transferring Client-specific
@@ -195,14 +195,13 @@ const sections = [
     content: (
       <>
         <p>
-          Website Care is an optional month-to-month
-          service currently priced at $30 per month.
-          When selected, Website Care includes hosting
-          or hosting management, standard domain
-          renewal, uptime and security monitoring, SSL
-          management, technical maintenance and bug
-          fixes, and up to one hour of minor website
-          updates during each monthly billing period.
+          For new enrollments, Website Care is $50 per month.
+          It includes hosting or hosting management, standard
+          domain renewal as described above, basic technical
+          upkeep and monitoring, and up to one hour of minor
+          content updates each month. Website Care is optional
+          and month-to-month. Existing clients keep the rate
+          and scope in their agreements.
         </p>
 
         <p>
@@ -229,7 +228,7 @@ const sections = [
     content: (
       <>
         <p>
-          Clients who affirmatively select Website Care
+          Clients who affirmatively select a monthly plan
           authorize Mordecai and its payment processor
           to automatically charge the payment method
           provided at the recurring monthly rate shown
@@ -244,7 +243,7 @@ const sections = [
         </p>
 
         <p>
-          Ending Website Care does not cancel or refund
+          Ending a monthly plan does not cancel or refund
           amounts already owed for website projects,
           Additional Website Work, third-party costs, or
           services already provided.
@@ -354,7 +353,7 @@ const sections = [
         </p>
 
         <p>
-          Clients without active Website Care are
+          Clients without an active monthly plan are
           responsible for ongoing hosting, domain
           renewals, maintenance, updates, and management
           after the applicable project and transfer are
@@ -383,7 +382,7 @@ const sections = [
 
         <p>
           If the recurring price or material terms of an
-          active Website Care service are changed,
+          active monthly plan are changed,
           Mordecai will provide notice as required by
           applicable law before the change takes effect.
         </p>
@@ -394,12 +393,12 @@ const sections = [
 
 function Terms() {
   return (
-    <main className="bg-[#F7F5EF] text-[#17151A]">
+    <main className="bg-ivory text-[#17151A]">
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-black/10 px-5 pb-20 pt-20 lg:px-8 lg:pb-24 lg:pt-24">
+      <section className="relative overflow-hidden border-b border-black/10 px-5 pb-14 pt-14 lg:px-8 lg:pb-16 lg:pt-16">
         <div className="absolute left-1/2 top-[-260px] h-[560px] w-[800px] -translate-x-1/2 rounded-full bg-[#7547B8]/10 blur-[110px]" />
 
-        <div className="relative mx-auto max-w-4xl">
+        <div className="page-hero-content relative mx-auto max-w-4xl">
           <Link
             to="/pricing"
             className="inline-flex items-center gap-2 text-sm font-semibold text-[#7547B8] transition hover:text-[#6439A5]"
@@ -427,15 +426,15 @@ function Terms() {
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <div className="rounded-full border border-black/10 bg-white/60 px-4 py-2 text-xs font-semibold text-[#17151A]/55">
+            <div className="rounded-full border border-black/10 bg-bone/60 px-4 py-2 text-xs font-semibold text-[#17151A]/55">
               Website Projects
             </div>
 
-            <div className="rounded-full border border-black/10 bg-white/60 px-4 py-2 text-xs font-semibold text-[#17151A]/55">
+            <div className="rounded-full border border-black/10 bg-bone/60 px-4 py-2 text-xs font-semibold text-[#17151A]/55">
               Website Care
             </div>
 
-            <div className="rounded-full border border-black/10 bg-white/60 px-4 py-2 text-xs font-semibold text-[#17151A]/55">
+            <div className="rounded-full border border-black/10 bg-bone/60 px-4 py-2 text-xs font-semibold text-[#17151A]/55">
               Additional Website Work
             </div>
           </div>
@@ -447,7 +446,7 @@ function Terms() {
       </section>
 
       {/* INTRO */}
-      <section className="px-5 py-14 lg:px-8">
+      <section className="px-5 py-10 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <div className="rounded-[28px] border border-[#7547B8]/15 bg-[#7547B8]/[0.06] p-6 sm:p-8">
             <div className="flex items-start gap-4">
@@ -479,7 +478,7 @@ function Terms() {
       </section>
 
       {/* TERMS */}
-      <section className="px-5 pb-24 lg:px-8">
+      <section className="px-5 pb-16 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <div className="divide-y divide-black/10 border-y border-black/10">
             {sections.map((section) => (
@@ -509,7 +508,7 @@ function Terms() {
       </section>
 
       {/* WEBSITE CARE SUMMARY */}
-      <section className="bg-[#17151A] px-5 py-20 text-white lg:px-8">
+      <section className="dark-pattern px-5 py-14 text-white lg:px-8">
         <div className="mx-auto max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#F4F0A3]">
             Quick Reference
@@ -521,11 +520,12 @@ function Terms() {
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
             {[
-              "$30 per month",
+
+              "Website Care: $50 per month",
               "Month-to-month",
-              "Up to 1 hour of minor updates",
+              "Website Care includes up to 1 hour of minor content updates",
               "Unused update time does not roll over",
-              "Standard domain renewal included",
+              "Standard domain renewal up to $30 per year",
               "Hosting & technical maintenance",
               "Cancel before the next billing period",
               "Additional development billed separately",
@@ -551,7 +551,7 @@ function Terms() {
       </section>
 
       {/* QUESTIONS */}
-      <section className="px-5 py-20 lg:px-8">
+      <section className="px-5 py-14 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <div className="rounded-[30px] bg-[#7547B8] p-8 text-white sm:p-10">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">

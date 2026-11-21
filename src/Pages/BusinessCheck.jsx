@@ -21,6 +21,20 @@ import {
   Search,
 } from "lucide-react";
 
+async function readCheckerResponse(response) {
+  try {
+    return await response.json();
+  } catch (error) {
+    if (!(error instanceof SyntaxError)) throw error;
+
+    if (import.meta.env.DEV && response.status === 404) {
+      throw new Error("Business Checker functions are unavailable. Open the site through Netlify Dev to test locally.");
+    }
+
+    throw new Error("The Business Checker returned an unexpected response. Please try again.");
+  }
+}
+
 function BusinessCheck() {
   const [
     businessQuery,
@@ -165,7 +179,7 @@ function BusinessCheck() {
         );
 
       const data =
-        await response.json();
+        await readCheckerResponse(response);
 
       if (!response.ok) {
         throw new Error(
@@ -212,7 +226,7 @@ function BusinessCheck() {
           );
 
         const data =
-          await response.json();
+          await readCheckerResponse(response);
 
         if (!response.ok) {
           throw new Error(
@@ -324,7 +338,7 @@ function BusinessCheck() {
           );
 
         const data =
-          await response.json();
+          await readCheckerResponse(response);
 
         if (!response.ok) {
           throw new Error(
@@ -482,9 +496,9 @@ function BusinessCheck() {
     ) || [];
 
   return (
-    <main className="min-h-screen bg-[#F7F5EF]">
-      <section className="border-b border-black/[0.06] px-5 pb-14 pt-16 lg:px-8 lg:pb-20 lg:pt-24">
-        <div className="mx-auto max-w-7xl">
+    <main className="bg-ivory">
+      <section className="border-b border-black/[0.06] px-5 py-6 lg:px-8 lg:py-8">
+        <div className="page-hero-content mx-auto max-w-7xl">
           <Link
             to="/"
             className="inline-flex items-center gap-2 text-sm font-semibold text-[#17151A]/45 transition hover:text-[#7547B8]"
@@ -493,13 +507,9 @@ function BusinessCheck() {
             Back to Mordecai
           </Link>
 
-          <div className="mt-10 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+          <div className="mt-4 grid gap-4 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#7547B8]">
-                Free Online Business Check
-              </p>
-
-              <h1 className="mt-5 max-w-3xl text-5xl font-bold leading-[0.95] tracking-[-0.055em] text-[#17151A] sm:text-6xl lg:text-7xl">
+              <h1 className="max-w-3xl text-4xl font-bold leading-[0.95] tracking-[-0.055em] text-[#17151A] sm:text-5xl lg:text-6xl">
                 See how your business looks{" "}
                 <span className="text-[#7547B8]">
                   to customers online.
@@ -508,20 +518,17 @@ function BusinessCheck() {
             </div>
 
             <p className="max-w-xl text-lg leading-8 text-[#17151A]/55 lg:justify-self-end">
-              Enter your business name. We'll try
-              to find your website automatically,
-              then review the signals we can
-              confidently verify.
+              Enter your business name and we'll look for your website to check its basics.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="px-5 py-14 lg:px-8 lg:py-20">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_0.7fr] lg:gap-12">
+      <section className="px-5 py-6 lg:px-8 lg:py-8">
+        <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[1fr_0.7fr] lg:gap-7">
           <div>
             {!result ? (
-              <div className="rounded-[2rem] border border-black/[0.07] bg-white p-6 shadow-[0_30px_100px_rgba(23,21,26,0.06)] sm:p-8 lg:p-10">
+              <div className="rounded-[2rem] border border-black/[0.07] bg-bone p-6 shadow-[0_30px_100px_rgba(23,21,26,0.06)] sm:p-7">
                 <form
                   onSubmit={
                     handleSubmit
@@ -576,7 +583,7 @@ function BusinessCheck() {
                       }}
                       placeholder="Green Tea"
                       autoComplete="off"
-                      className="w-full rounded-2xl border border-black/10 bg-[#F7F5EF] py-4 pl-12 pr-4 text-[#17151A] outline-none transition placeholder:text-[#17151A]/30 focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
+                      className="w-full rounded-2xl border border-black/10 bg-ivory py-4 pl-12 pr-4 text-[#17151A] outline-none transition placeholder:text-[#17151A]/30 focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
                     />
                   </div>
 
@@ -615,7 +622,7 @@ function BusinessCheck() {
                   </div>
 
                   {showLocationFields && (
-                    <div className="mt-5 rounded-2xl border border-black/[0.07] bg-[#F7F5EF]/70 p-4">
+                    <div className="mt-5 rounded-2xl border border-black/[0.07] bg-ivory/70 p-4">
                       <div className="flex items-start gap-2">
                         <MapPin
                           size={17}
@@ -660,7 +667,7 @@ function BusinessCheck() {
                             }}
                             placeholder="Stony Brook"
                             autoComplete="address-level2"
-                            className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-[#17151A]/25 focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
+                            className="mt-2 w-full rounded-xl border border-black/10 bg-bone px-4 py-3 text-sm outline-none transition placeholder:text-[#17151A]/25 focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
                           />
                         </div>
 
@@ -690,7 +697,7 @@ function BusinessCheck() {
                             }}
                             placeholder="NY"
                             autoComplete="address-level1"
-                            className="mt-2 w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm uppercase outline-none transition placeholder:text-[#17151A]/25 focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
+                            className="mt-2 w-full rounded-xl border border-black/10 bg-bone px-4 py-3 text-sm uppercase outline-none transition placeholder:text-[#17151A]/25 focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
                           />
                         </div>
                       </div>
@@ -753,7 +760,7 @@ function BusinessCheck() {
                                 suggestion
                               )
                             }
-                            className="flex w-full items-start gap-3 border-b border-black/[0.06] bg-white px-4 py-4 text-left shadow-none transition last:border-b-0 hover:bg-[#F7F5EF]"
+                            className="flex w-full items-start gap-3 border-b border-black/[0.06] bg-bone px-4 py-4 text-left shadow-none transition last:border-b-0 hover:bg-ivory"
                           >
                             <MapPin
                               size={18}
@@ -841,7 +848,7 @@ function BusinessCheck() {
                             )
                           }
                           placeholder="yourbusiness.com"
-                          className="w-full rounded-2xl border border-black/10 bg-white py-4 pl-12 pr-4 outline-none transition focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
+                          className="w-full rounded-2xl border border-black/10 bg-bone py-4 pl-12 pr-4 outline-none transition focus:border-[#7547B8] focus:ring-4 focus:ring-[#7547B8]/10"
                         />
                       </div>
 
@@ -864,7 +871,7 @@ function BusinessCheck() {
                 )}
               </div>
             ) : (
-              <div className="overflow-hidden rounded-[2rem] border border-black/[0.07] bg-white shadow-[0_30px_100px_rgba(23,21,26,0.06)]">
+              <div className="overflow-hidden rounded-[2rem] border border-black/[0.07] bg-bone shadow-[0_30px_100px_rgba(23,21,26,0.06)]">
                 <div className="bg-[#7547B8] p-7 text-white sm:p-9 lg:p-10">
                   <p className="text-sm font-bold uppercase tracking-[0.16em] text-white/55">
                     Your Online Presence Snapshot
@@ -918,7 +925,7 @@ function BusinessCheck() {
                   </div>
                 </div>
 
-                <div className="p-6 sm:p-8 lg:p-10">
+                <div className="p-6 sm:p-7">
                   {passedChecks.length > 0 && (
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.17em] text-[#17151A]/35">
@@ -974,7 +981,7 @@ function BusinessCheck() {
                           (check) => (
                             <div
                               key={check.id}
-                              className="flex items-start gap-3 rounded-2xl border border-black/[0.06] bg-[#F7F5EF] p-4"
+                              className="flex items-start gap-3 rounded-2xl border border-black/[0.06] bg-ivory p-4"
                             >
                               <AlertCircle
                                 size={19}
@@ -1017,7 +1024,7 @@ function BusinessCheck() {
                           (check) => (
                             <div
                               key={check.id}
-                              className="flex items-start gap-3 rounded-2xl border border-black/[0.06] bg-white p-4"
+                              className="flex items-start gap-3 rounded-2xl border border-black/[0.06] bg-bone p-4"
                             >
                               <CircleHelp
                                 size={19}
@@ -1045,7 +1052,7 @@ function BusinessCheck() {
                   )}
 
                   {result.priorities?.length > 0 && (
-                    <div className="mt-10 rounded-3xl bg-[#17151A] p-6 text-white">
+                    <div className="mt-10 rounded-3xl dark-pattern p-6 text-white">
                       <p className="text-xs font-bold uppercase tracking-[0.17em] text-[#F4F0A3]">
                         Start here
                       </p>
@@ -1103,7 +1110,7 @@ function BusinessCheck() {
                     <button
                       type="button"
                       onClick={resetCheck}
-                      className="inline-flex flex-1 items-center justify-center rounded-full border border-black/10 bg-white px-6 py-4 font-semibold text-[#17151A] shadow-none transition hover:bg-[#F7F5EF]"
+                      className="inline-flex flex-1 items-center justify-center rounded-full border border-black/10 bg-bone px-6 py-4 font-semibold text-[#17151A] shadow-none transition hover:bg-ivory"
                     >
                       Check Another Business
                     </button>
@@ -1124,16 +1131,10 @@ function BusinessCheck() {
             )}
           </div>
 
-          <aside className="h-fit rounded-[2rem] bg-[#17151A] p-7 text-white sm:p-8 lg:sticky lg:top-28">
-            <p className="text-xs font-bold uppercase tracking-[0.17em] text-[#F4F0A3]">
-              What we look at
-            </p>
+          <aside className="h-fit rounded-[2rem] dark-pattern p-5 text-white sm:p-6 lg:sticky lg:top-28">
+            <h2 className="text-3xl font-bold leading-tight tracking-[-0.04em]">What we look at</h2>
 
-            <h2 className="mt-4 text-3xl font-bold leading-tight tracking-[-0.04em]">
-              Get found. Look good. Build trust.
-            </h2>
-
-            <div className="mt-8 space-y-6">
+            <div className="mt-4 space-y-3">
               {[
                 {
                   title:
@@ -1163,7 +1164,7 @@ function BusinessCheck() {
                 (item) => (
                   <div
                     key={item.title}
-                    className="border-t border-white/10 pt-5 first:border-t-0 first:pt-0"
+                    className="border-t border-white/10 pt-3 first:border-t-0 first:pt-0"
                   >
                     <p className="font-semibold">
                       {item.title}

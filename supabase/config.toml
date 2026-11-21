@@ -1,0 +1,8 @@
+[functions.search-console]
+# The handler verifies the session with Supabase Auth and checks the owner UUID.
+# This supports projects using asymmetric JWT signing keys.
+verify_jwt = false
+
+[functions.lead-digest]
+# Authenticated exclusively with a server-only cron secret.
+verify_jwt = false

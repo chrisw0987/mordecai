@@ -313,12 +313,12 @@ const sections = [
 
 function Privacy() {
   return (
-    <main className="bg-[#F7F5EF] text-[#17151A]">
+    <main className="bg-ivory text-[#17151A]">
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-black/10 px-5 pb-20 pt-20 lg:px-8 lg:pb-24 lg:pt-24">
+      <section className="relative overflow-hidden border-b border-black/10 px-5 pb-14 pt-14 lg:px-8 lg:pb-16 lg:pt-16">
         <div className="absolute left-1/2 top-[-260px] h-[560px] w-[800px] -translate-x-1/2 rounded-full bg-[#7547B8]/10 blur-[110px]" />
 
-        <div className="relative mx-auto max-w-4xl">
+        <div className="page-hero-content relative mx-auto max-w-4xl">
           <Link
             to="/"
             className="inline-flex items-center gap-2 text-sm font-semibold text-[#7547B8] transition hover:text-[#6439A5]"
@@ -352,10 +352,10 @@ function Privacy() {
       </section>
 
       {/* SIMPLE SUMMARY */}
-      <section className="px-5 py-14 lg:px-8">
+      <section className="px-5 py-10 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-[24px] border border-black/10 bg-white/60 p-6">
+            <div className="rounded-[24px] border border-black/10 bg-bone/60 p-6">
               <Database
                 size={21}
                 className="text-[#7547B8]"
@@ -372,7 +372,7 @@ function Privacy() {
               </p>
             </div>
 
-            <div className="rounded-[24px] border border-black/10 bg-white/60 p-6">
+            <div className="rounded-[24px] border border-black/10 bg-bone/60 p-6">
               <LockKeyhole
                 size={21}
                 className="text-[#7547B8]"
@@ -388,7 +388,7 @@ function Privacy() {
               </p>
             </div>
 
-            <div className="rounded-[24px] border border-black/10 bg-white/60 p-6">
+            <div className="rounded-[24px] border border-black/10 bg-bone/60 p-6">
               <ShieldCheck
                 size={21}
                 className="text-[#7547B8]"
@@ -408,7 +408,7 @@ function Privacy() {
       </section>
 
       {/* POLICY SECTIONS */}
-      <section className="px-5 pb-24 lg:px-8">
+      <section className="px-5 pb-16 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <div className="divide-y divide-black/10 border-y border-black/10">
             {sections.map((section) => (
@@ -438,7 +438,7 @@ function Privacy() {
       </section>
 
       {/* CONTACT */}
-      <section className="bg-[#17151A] px-5 py-20 text-white lg:px-8">
+      <section className="dark-pattern px-5 py-14 text-white lg:px-8">
         <div className="mx-auto max-w-4xl">
           <div className="grid items-center gap-10 md:grid-cols-[1fr_auto]">
             <div>
